@@ -71,6 +71,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
 # Добавляем путь к Cargo в PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
 
+
 # Скачиваем и собираем bootupd
 WORKDIR /tmp
 RUN wget https://github.com/coreos/bootupd/archive/refs/tags/v0.2.25.zip -O bootupd.zip && \
