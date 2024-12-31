@@ -1,6 +1,6 @@
 FROM registry.altlinux.org/sisyphus/base:latest
 
-# Устанавливаем зависимости
+# Устанавливаем все зависимости
 RUN apt-get update && apt-get install -y \
     mount \
     bluez \
@@ -9,6 +9,10 @@ RUN apt-get update && apt-get install -y \
     mc \
     nano \
     passwd \
+    efivar \
+    shim-unsigned  \
+    shim-signed \
+    efitools \
     glibc-utils \
     su \
     sudo \
@@ -18,6 +22,13 @@ RUN apt-get update && apt-get install -y \
     fuse-overlayfs \
     git \
     wget \
+    composefs \
+    skopeo \
+    efibootmgr \
+    grub \
+    grub-efi \
+    grub-btrfs \
+    containers-common \
     curl \
     losetup \
     build-essential \
@@ -25,6 +36,7 @@ RUN apt-get update && apt-get install -y \
     util-linux \
     coreutils \
     systemd \
+    systemd-devel \
     dosfstools \
     e2fsprogs \
     attr \
@@ -40,19 +52,23 @@ RUN apt-get update && apt-get install -y \
     dracut \
     kernel-image-6.12 \
     kernel-headers-6.12 \
+    rsync \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Настраиваем os-release
+# Настраиваем os-release (косметика)
 RUN echo "ID=alt" > /etc/os-release && \
     echo "NAME=\"ALT Atomic\"" >> /etc/os-release && \
     echo "VERSION=\"6.12 Atomic Build\"" >> /etc/os-release
 
-# Настраиваем OSTree и composefs
+# Включаем readonly в конфиг OSTree (при загрузке)
 RUN mkdir -p /usr/lib/ostree && \
-    echo -e "[sysroot]\nreadonly = true" > /usr/lib/ostree/prepare-root.conf
-    #echo -e "[composefs]\nenabled = true\n[sysroot]\nreadonly = true" > /usr/lib/ostree/prepare-root.conf
+    echo "[sysroot]" > /usr/lib/ostree/prepare-root.conf && \
+    echo "readonly = true" >> /usr/lib/ostree/prepare-root.conf
+    # Если нужно включить composefs:
+#    echo "[composefs]" >> /usr/lib/ostree/prepare-root.conf && \
+#    echo "enabled = true" >> /usr/lib/ostree/prepare-root.conf
 
-# Скачиваем и собираем zstd
+# Скачиваем и собираем zstd (пример)
 WORKDIR /tmp
 RUN wget https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.tar.gz && \
     tar -xzf zstd-1.5.5.tar.gz && \
@@ -60,28 +76,40 @@ RUN wget https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.ta
     make && make install && \
     cd .. && rm -rf zstd-1.5.5*
 
-# Настраиваем PKG_CONFIG_PATH для поиска libzstd.pc
+# Настройка PKG_CONFIG_PATH (для libzstd.pc)
 ENV PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/lib/pkgconfig"
 
-# Устанавливаем Rust и Cargo через Rustup
+# Устанавливаем Rust + Cargo через Rustup
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     . /root/.cargo/env && \
     rustup default stable
 
-# Добавляем путь к Cargo в PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
 
+# создаем папку
+RUN mkdir -p /usr/local/bin
 
-# Скачиваем и собираем bootupd
+# Сборка bootupd (которая включает bootupd и bootupctl)
 WORKDIR /tmp
 RUN wget https://github.com/coreos/bootupd/archive/refs/tags/v0.2.25.zip -O bootupd.zip && \
     unzip bootupd.zip && \
     cd bootupd-0.2.25 && \
+    # ALT - не такой как все, grub2 не существует, изменяем хардкод
+    sed -i 's/\bgrub2\b/grub/g' src/grubconfigs.rs && \
+    sed -i 's|let cruft = \["loader", "grub2"\];|let cruft = \["loader", "grub"\];|' src/efi.rs && \
+    sed -i 's|usr/sbin/grub2-install|usr/sbin/grub-install|' src/bios.rs && \
+    sed -i '/if !rpmout.status.success()/a \        return Ok(ContentMetadata { timestamp: chrono::Utc::now(), version: "unknown".to_string() });' \
+        src/packagesystem.rs && \
+    sed -i '/std::io::stderr().write_all(&rpmout.stderr)/d' src/packagesystem.rs && \
+    sed -i '/bail!("Failed to invoke rpm -qf")/d' src/packagesystem.rs && \
     cargo build --release && \
+    # Устанавливаем bootupd
     install -m 0755 target/release/bootupd /usr/local/bin/bootupd && \
+    ln -sf /usr/local/bin/bootupd /usr/local/bin/bootupctl && \
+    ln -sf /usr/local/bin/bootupd /usr/bin/bootupctl && \
     cd .. && rm -rf bootupd*
 
-# Скачиваем и собираем bootc
+# Сборка bootc
 WORKDIR /tmp
 RUN wget https://github.com/containers/bootc/archive/refs/tags/v1.1.3.zip -O bootc.zip && \
     unzip bootc.zip && \
@@ -90,42 +118,59 @@ RUN wget https://github.com/containers/bootc/archive/refs/tags/v1.1.3.zip -O boo
     install -m 0755 target/release/bootc /usr/local/bin/bootc && \
     cd .. && rm -rf bootc*
 
-# Генерация initramfs
-RUN dracut --force --kver $(ls /usr/lib/modules | head -n 1)
+# Генерация initramfs для «первого» найденного ядра
+RUN dracut --force --kver "$(ls /usr/lib/modules | head -n 1)"
 
-# Копируем ядро и initramfs в структуру OSTree
-RUN cp /boot/vmlinuz-6.12.6-6.12-alt1 /usr/lib/modules/6.12.6-6.12-alt1/vmlinuz && \
-    cp /boot/initramfs-6.12.6-6.12-alt1.img /usr/lib/modules/6.12.6-6.12-alt1/initramfs.img
+# Копируем vmlinuz и initramfs в соответствующую папку
+RUN set -ex && \
+    KERNEL_VERSION="$(ls /usr/lib/modules | head -n 1)" && \
+    cp "/boot/vmlinuz-${KERNEL_VERSION}"       "/usr/lib/modules/${KERNEL_VERSION}/vmlinuz" && \
+    cp "/boot/initramfs-${KERNEL_VERSION}.img" "/usr/lib/modules/${KERNEL_VERSION}/initramfs.img"
 
-# Добавление файла конфигурации для Podman
-#RUN mkdir -p /etc/containers && \
-#    echo "[storage]" > /etc/containers/storage.conf && \
-#    echo "driver = \"overlay\"" >> /etc/containers/storage.conf && \
-#    echo "graphroot = \"/var/lib/containers/storage\"" >> /etc/containers/storage.conf && \
-#    echo "runroot = \"/run/containers/storage\"" >> /etc/containers/storage.conf
+# Восстанавливаем папку для apt
+RUN mkdir /var/lib/apt/lists/partial
 
-# Подготовка базовых директорий
-RUN mkdir -p /tmp/base-system/etc && \
-    mkdir -p /tmp/base-system/var && \
-    mkdir -p /tmp/base-system/usr && \
-    mkdir -p /tmp/base-system/tmp && \
-    echo "Welcome to ALT Atomic!" > /tmp/base-system/tmp/welcome.txt
+#
+# --- Переносим root и home в /var, если нужно, чтобы они были writable ---
+#
+RUN mkdir -p /var/root /var/home
+RUN rm -rf /root && ln -s var/root /root
+RUN rm -rf /home && ln -s var/home /home
 
-# Создание символических ссылок
-RUN ln -s /usr/bin /tmp/base-system/bin && \
-    ln -s /usr/lib /tmp/base-system/lib && \
-    ln -s /usr/lib64 /tmp/base-system/lib64 && \
-    ln -s /home /tmp/base-system/home && \
-    ln -s /mnt /tmp/base-system/mnt && \
-    ln -s /var/opt /tmp/base-system/opt
-
-# Инициализация OSTree репозитория
+# Инициализируем /ostree/repo
 RUN mkdir -p /ostree/repo && \
     ostree --repo=/ostree/repo init --mode=archive
 
-# Добавление первого коммита
-RUN ostree --repo=/ostree/repo commit -s "Initial ALT Atomic Commit with kernel and initramfs" \
-    -b alt/atomic --tree=dir=/tmp/base-system
+#
+# -- Копируем содержимое / (контейнера) в /tmp/rootfscopy, исключая псевдо-файловые системы и прочее --
+#
+RUN mkdir /tmp/rootfscopy && \
+    rsync -aAX \
+      --exclude=/dev \
+      --exclude=/proc \
+      --exclude=/sys \
+      --exclude=/run \
+      --exclude=/tmp \
+      --exclude=/var/tmp \
+      --exclude=/var/lib/containers \
+      --exclude=/ostree \
+      --exclude=/output \
+      / /tmp/rootfscopy/
 
-# Установка метки для совместимости с bootc
+## --- Добавляем метаданные для компонента BIOS в формате JSON ---
+RUN mkdir -p /usr/lib/bootupd/updates && \
+    echo '{ "timestamp":"2024-11-27T10:13:15Z", "version": "1.0.0", "description": "Initial BIOS component for bootupd" }' > /usr/lib/bootupd/updates/BIOS.json
+
+# --- Добавляем метаданные для компонента EFI в формате JSON ---
+RUN echo '{ "timestamp":"2024-11-27T10:13:15Z", "version": "1.0.0", "description": "Initial EFI component for bootupd" }' > /usr/lib/bootupd/updates/EFI.json
+
+#
+# --- Делаем OSTree-коммит из /tmp/rootfscopy ---
+#
+RUN ostree --repo=/ostree/repo commit \
+    --branch=alt/atomic \
+    --subject "Initial ALT Atomic Commit" \
+    --tree=dir=/tmp/rootfscopy
+
+WORKDIR ~
 LABEL containers.bootc=1
