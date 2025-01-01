@@ -69,8 +69,8 @@ RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 # Настраиваем systemd-службы
 RUN mkdir -p /etc/systemd/system/local-fs.target.wants/ && \
     ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service
-RUN ln -s /usr/lib/systemd/system/NetworkManager.service \
-       /etc/systemd/system/multi-user.target.wants/NetworkManager.service
+#RUN ln -s /usr/lib/systemd/system/NetworkManager.service \
+#       /etc/systemd/system/multi-user.target.wants/NetworkManager.service
 
 # Настраиваем os-release (косметика)
 RUN echo "ID=alt" > /etc/os-release && \
@@ -173,7 +173,7 @@ RUN mkdir -p /ostree/repo && \
 # -- Копируем содержимое / (контейнера) в /tmp/rootfscopy, исключая псевдо-файловые системы и прочее --
 #
 RUN mkdir /tmp/rootfscopy && \
-    rsync -aAX \
+    rsync -aA \
       --exclude=/dev \
       --exclude=/proc \
       --exclude=/sys \
