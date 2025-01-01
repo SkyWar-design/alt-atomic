@@ -40,6 +40,8 @@ RUN apt-get update && apt-get install -y \
     systemd-devel \
     dosfstools \
     e2fsprogs \
+    iputils \
+    NetworkManager \
     attr \
     sfdisk \
     rust \
@@ -58,14 +60,17 @@ RUN apt-get update && apt-get install -y \
 
 # Создаём пользователя "atomic" и задаём пароль "atomic"
 RUN useradd -m -G wheel -s /bin/bash atomic && \
-    echo "atomic:atomic" | chpasswd
+    echo "atomic:atomic" | chpasswd && \
+    mkdir -p /home/atomic && chown atomic:atomic /home/atomic
 
-# Добавляем юзера в группу wheel
+# Добавляем права
 RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
 # Настраиваем systemd-службы
 RUN mkdir -p /etc/systemd/system/local-fs.target.wants/ && \
     ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service
+RUN ln -s /usr/lib/systemd/system/NetworkManager.service \
+       /etc/systemd/system/multi-user.target.wants/NetworkManager.service
 
 # Настраиваем os-release (косметика)
 RUN echo "ID=alt" > /etc/os-release && \
@@ -137,7 +142,7 @@ RUN KVER="$(ls /usr/lib/modules | head -n 1)" && \
     dracut --force \
            --kver "$KVER" \
            --add "qemu ostree virtiofs btrfs" \
-           --add-drivers "virtio_blk virtio_pci" \
+           --add-drivers "virtio_blk virtio_pci virtio_net" \
            "/boot/initramfs-$KVER.img"
 
 # Копируем vmlinuz и initramfs в соответствующую папку
@@ -156,7 +161,6 @@ RUN mkdir /sysroot
 #
 # --- Переносим root и home в /var, если нужно, чтобы они были writable ---
 #
-RUN mkdir -p /var/root /var/home
 RUN mkdir -p /var/root /var/home
 RUN rm -rf /root && ln -s var/root /root
 RUN rm -rf /home && ln -s var/home /home
