@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y \
     glibc-utils \
     su \
     sudo \
+    virtiofsd \
+    qemu \
+    qemu-device-display-virtio-gpu \
     which \
     ostree \
     libostree-devel \
@@ -50,6 +53,7 @@ RUN apt-get update && apt-get install -y \
     libgio \
     libgio-devel \
     dracut \
+    kernel-modules-virtualbox-6.12 \
     kernel-image-6.12 \
     kernel-headers-6.12 \
     rsync \
@@ -123,7 +127,14 @@ RUN wget https://github.com/containers/bootc/archive/refs/tags/v1.1.3.zip -O boo
     cd .. && rm -rf bootc*
 
 # Генерация initramfs для «первого» найденного ядра
-RUN dracut --force --kver "$(ls /usr/lib/modules | head -n 1)"
+# RUN dracut --force --kver "$(ls /usr/lib/modules | head -n 1)"
+
+RUN KVER="$(ls /usr/lib/modules | head -n 1)" && \
+    dracut --force \
+           --kver "$KVER" \
+           --add "qemu ostree virtiofs btrfs" \
+           --add-drivers "virtio_blk virtio_pci" \
+           "/boot/initramfs-$KVER.img"
 
 # Копируем vmlinuz и initramfs в соответствующую папку
 RUN set -ex && \
