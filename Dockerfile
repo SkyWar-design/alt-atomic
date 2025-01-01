@@ -55,6 +55,10 @@ RUN apt-get update && apt-get install -y \
     rsync \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Настраиваем systemd-службы
+RUN mkdir -p /etc/systemd/system/local-fs.target.wants/ && \
+    ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service
+
 # Настраиваем os-release (косметика)
 RUN echo "ID=alt" > /etc/os-release && \
     echo "NAME=\"ALT Atomic\"" >> /etc/os-release && \
@@ -172,10 +176,10 @@ RUN echo '{ "timestamp":"2024-11-27T10:13:15Z", "version": "1.0.0", "description
 #
 # --- Делаем OSTree-коммит из /tmp/rootfscopy ---
 #
-#RUN ostree --repo=/ostree/repo commit \
-#    --branch=alt/atomic \
-#    --subject "Initial ALT Atomic Commit" \
-#    --tree=dir=/tmp/rootfscopy
+RUN ostree --repo=/ostree/repo commit \
+    --branch=alt/atomic \
+    --subject "Initial ALT Atomic Commit" \
+    --tree=dir=/tmp/rootfscopy
 
 WORKDIR ~
 LABEL containers.bootc=1
