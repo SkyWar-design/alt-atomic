@@ -17,8 +17,6 @@ RUN apt-get update && apt-get install -y \
     su \
     sudo \
     virtiofsd \
-    qemu \
-    qemu-device-display-virtio-gpu \
     which \
     ostree \
     libostree-devel \
@@ -53,7 +51,6 @@ RUN apt-get update && apt-get install -y \
     libgio \
     libgio-devel \
     dracut \
-    kernel-modules-virtualbox-6.12 \
     kernel-image-6.12 \
     kernel-headers-6.12 \
     rsync \
