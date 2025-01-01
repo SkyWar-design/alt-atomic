@@ -130,9 +130,14 @@ RUN set -ex && \
 # Восстанавливаем папку для apt
 RUN mkdir /var/lib/apt/lists/partial
 
+# Удаляем fstab
+RUN rm -f /etc/fstab
+RUN mkdir /sysroot
+
 #
 # --- Переносим root и home в /var, если нужно, чтобы они были writable ---
 #
+RUN mkdir -p /var/root /var/home
 RUN mkdir -p /var/root /var/home
 RUN rm -rf /root && ln -s var/root /root
 RUN rm -rf /home && ln -s var/home /home
@@ -167,10 +172,10 @@ RUN echo '{ "timestamp":"2024-11-27T10:13:15Z", "version": "1.0.0", "description
 #
 # --- Делаем OSTree-коммит из /tmp/rootfscopy ---
 #
-RUN ostree --repo=/ostree/repo commit \
-    --branch=alt/atomic \
-    --subject "Initial ALT Atomic Commit" \
-    --tree=dir=/tmp/rootfscopy
+#RUN ostree --repo=/ostree/repo commit \
+#    --branch=alt/atomic \
+#    --subject "Initial ALT Atomic Commit" \
+#    --tree=dir=/tmp/rootfscopy
 
 WORKDIR ~
 LABEL containers.bootc=1
