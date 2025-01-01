@@ -56,6 +56,13 @@ RUN apt-get update && apt-get install -y \
     rsync \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Создаём пользователя "atomic" и задаём пароль "atomic"
+RUN useradd -m -G wheel -s /bin/bash atomic && \
+    echo "atomic:atomic" | chpasswd
+
+# Добавляем юзера в группу wheel
+RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
+
 # Настраиваем systemd-службы
 RUN mkdir -p /etc/systemd/system/local-fs.target.wants/ && \
     ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service
