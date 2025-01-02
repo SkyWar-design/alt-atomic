@@ -58,6 +58,9 @@ RUN apt-get update && apt-get install -y \
     rsync \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# 2) Turn SELinux off inside container:
+RUN echo "SELINUX=disabled" > /etc/selinux/config
+
 # Создаём пользователя "atomic" и задаём пароль "atomic"
 RUN useradd -m -G wheel -s /bin/bash atomic && \
     echo "atomic:atomic" | chpasswd && \
@@ -173,7 +176,7 @@ RUN mkdir -p /ostree/repo && \
 # -- Копируем содержимое / (контейнера) в /tmp/rootfscopy, исключая псевдо-файловые системы и прочее --
 #
 RUN mkdir /tmp/rootfscopy && \
-    rsync -aA \
+    rsync -aAX \
       --exclude=/dev \
       --exclude=/proc \
       --exclude=/sys \
