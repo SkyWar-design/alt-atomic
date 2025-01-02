@@ -41,14 +41,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ostree skopeo
 
       # 8. Отправка в ghcr с помощью skopeo
-      - name: Encapsulate OSTree commit and push to GHCR
+      - name: Package OSTree commit into Docker container
         run: |
           mkdir -p temp_dir
-          ostree export --repo=./ostree_repo alt/atomic > temp_dir/ostree-commit.tar
+          ostree export --repo=./ostree_repo alt/atomic > temp_dir/rootfs.tar
           cd temp_dir
-          tar -xf ostree-commit.tar
-          rm ostree-commit.tar
+          echo '{"architecture":"amd64","os":"linux"}' > config.json
+          tar -cf rootfs.tar -C ./ .
+          echo '{"manifests":[{"digest":"rootfs.tar","platform":{"architecture":"amd64","os":"linux"}}]}' > manifest.json
           cd ..
-          skopeo copy --dest-creds "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}" \
-            dir:temp_dir \
-            docker://ghcr.io/skywar-design/alt-atomic:image-latest
+          docker buildx build --platform linux/amd64 -t ghcr.io/skywar-design/alt-atomic:image-latest temp_dir
+          docker push ghcr.io/skywar-design/alt-atomic:image-latest
