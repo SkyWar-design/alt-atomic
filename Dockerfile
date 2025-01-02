@@ -61,11 +61,6 @@ RUN apt-get update && apt-get install -y \
 # 2) Turn SELinux off inside container:
 RUN echo "SELINUX=disabled" > /etc/selinux/config
 
-# Создаём пользователя "atomic" и задаём пароль "atomic"
-RUN useradd -m -G wheel -s /bin/bash atomic && \
-    echo "atomic:atomic" | chpasswd && \
-    mkdir -p /home/atomic && chown atomic:atomic /home/atomic
-
 # Добавляем права
 RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
@@ -168,6 +163,14 @@ RUN mkdir -p /var/root /var/home
 RUN rm -rf /root && ln -s var/root /root
 RUN rm -rf /home && ln -s var/home /home
 
+# --- Создаем ссылку на ostree ---
+RUN ln -s /sysroot/ostree /ostree
+
+# Создаём пользователя "atomic" и задаём пароль "atomic"
+RUN useradd -m -G wheel -s /bin/bash atomic && \
+    echo "atomic:atomic" | chpasswd && \
+    mkdir -p /var/home/atomic && chown atomic:atomic /var/home/atomic
+
 # 12) Создаём каталог /sysroot/ostree/repo и инициализируем его
 RUN mkdir -p /sysroot/ostree/repo && \
     ostree --repo=/sysroot/ostree/repo init --mode=archive
@@ -182,7 +185,6 @@ RUN mkdir -p /tmp/rootfscopy && \
       --exclude=/tmp \
       --exclude=/var/tmp \
       --exclude=/var/lib/containers \
-      --exclude=/ostree \
       --exclude=/output \
       / /tmp/rootfscopy/
 
