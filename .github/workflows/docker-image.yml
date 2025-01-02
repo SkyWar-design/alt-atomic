@@ -9,12 +9,37 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1. Checkout кода из репозитория
       - uses: actions/checkout@v4
+
+      # 2. Логин в GitHub Container Registry
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
+      # 3. Сборка Docker-образа
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ghcr.io/skywar-design/alt-atomic:latest
+        run: docker build . --file Dockerfile --tag ghcr.io/skywar-design/alt-atomic:source
 
+      # 4. Загрузка Docker-образа в GitHub Container Registry
       - name: Push the Docker image to GitHub Container Registry
-        run: docker push ghcr.io/skywar-design/alt-atomic:latest
+        run: docker push ghcr.io/skywar-design/alt-atomic:source
+
+      # 5. Создание временного контейнера из собранного образа
+      - name: Create temporary container
+        run: docker create --name temp-container ghcr.io/skywar-design/alt-atomic:source
+
+      # 6. Копирование репозитория OSTree из контейнера на хост
+      - name: Copy OSTree repo from container
+        run: docker cp temp-container:/sysroot/ostree/repo ./ostree_repo
+
+      # 7. Удаление временного контейнера
+      - name: Remove temporary container
+        run: docker rm temp-container
+
+      # 8. Установка OSTree
+      - name: Install OSTree
+        run: sudo apt-get update && sudo apt-get install -y ostree
+
+      # 9. Инкапсуляция OSTree-коммита и загрузка образа обратно в GHCR
+      - name: Encapsulate OSTree commit and push to GHCR
+        run: ostree container encapsulate --repo=./ostree_repo alt/atomic docker://ghcr.io/skywar-design/alt-atomic:image-latest
