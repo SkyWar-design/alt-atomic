@@ -168,14 +168,12 @@ RUN mkdir -p /var/root /var/home
 RUN rm -rf /root && ln -s var/root /root
 RUN rm -rf /home && ln -s var/home /home
 
-# Инициализируем /ostree/repo
-RUN mkdir -p /ostree/repo && \
-    ostree --repo=/ostree/repo init --mode=archive
+# 12) Создаём каталог /sysroot/ostree/repo и инициализируем его
+RUN mkdir -p /sysroot/ostree/repo && \
+    ostree --repo=/sysroot/ostree/repo init --mode=archive
 
-#
-# -- Копируем содержимое / (контейнера) в /tmp/rootfscopy, исключая псевдо-файловые системы и прочее --
-#
-RUN mkdir /tmp/rootfscopy && \
+# 13) Копируем текущее содержимое контейнера в /tmp/rootfscopy
+RUN mkdir -p /tmp/rootfscopy && \
     rsync -aAX \
       --exclude=/dev \
       --exclude=/proc \
@@ -195,10 +193,8 @@ RUN mkdir -p /usr/lib/bootupd/updates && \
 # --- Добавляем метаданные для компонента EFI в формате JSON ---
 RUN echo '{ "timestamp":"2024-11-27T10:13:15Z", "version": "1.0.0", "description": "Initial EFI component for bootupd" }' > /usr/lib/bootupd/updates/EFI.json
 
-#
-# --- Делаем OSTree-коммит из /tmp/rootfscopy ---
-#
-RUN ostree --repo=/ostree/repo commit \
+# 14) Делаем ostree-коммит уже в /sysroot/ostree/repo
+RUN ostree --repo=/sysroot/ostree/repo commit \
     --branch=alt/atomic \
     --subject "Initial ALT Atomic Commit" \
     --tree=dir=/tmp/rootfscopy
