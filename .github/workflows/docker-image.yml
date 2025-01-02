@@ -52,7 +52,7 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             ostree:v2024.9 \
-            ostree -v
+            ostree --version
 #            ostree container encapsulate --repo=/workspace/ostree_repo alt/atomic docker://ghcr.io/skywar-design/alt-atomic:image-latest \
 #            --authfile /workspace/auth.json
 
