@@ -40,10 +40,15 @@ jobs:
       - name: Install OSTree
         run: sudo apt-get update && sudo apt-get install -y ostree skopeo
 
-      # 9. Инкапсуляция OSTree-коммита в образ и загрузка в GHCR
+      # 8. Отправка в ghcr с помощью skopeo
       - name: Encapsulate OSTree commit and push to GHCR
         run: |
-          ostree export --repo=./ostree_repo alt/atomic > ostree-commit.tar
+          mkdir -p temp_dir
+          ostree export --repo=./ostree_repo alt/atomic > temp_dir/ostree-commit.tar
+          cd temp_dir
+          tar -xf ostree-commit.tar
+          rm ostree-commit.tar
+          cd ..
           skopeo copy --dest-creds "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}" \
-            dir:ostree-commit.tar \
+            dir:temp_dir \
             docker://ghcr.io/skywar-design/alt-atomic:image-latest
