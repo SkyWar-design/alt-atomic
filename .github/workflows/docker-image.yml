@@ -52,6 +52,6 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             ostree:v2024.9 \
-            ostree container encapsulate -h
+            ostree container -h
 
 
