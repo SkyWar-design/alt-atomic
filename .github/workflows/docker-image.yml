@@ -51,12 +51,12 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             ostree:v2024.9 \
-            ostree checkout --repo=/workspace/ostree_repo alt/atomic ./extracted_root
+            ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root
 
       # 10. Создание нового контейнерного образа
-#      - name: Build system container image
-#        run: docker build -t ghcr.io/skywar-design/alt-atomic:img-latest ./extracted_root
+      - name: Build system container image
+        run: docker build -t ghcr.io/skywar-design/alt-atomic:img-latest ./extracted_root
 #
 #      # 11. Отправка нового контейнерного образа в реестр
-#      - name: Push system container image to GHCR
-#        run: docker push ghcr.io/skywar-design/alt-atomic:img-latest
+      - name: Push system container image to GHCR
+        run: docker push ghcr.io/skywar-design/alt-atomic:img-latest
