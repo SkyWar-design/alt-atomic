@@ -58,6 +58,7 @@ jobs:
           ostree:v2024.9 \
           sh -c "
             ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root && \
+            mkdir -p /workspace/extracted_root/sysroot/ostree/repo  && \
             cp -a /workspace/ostree_repo /workspace/extracted_root/ostree/repo  && \
             cat <<EOF > /workspace/extracted_root/Dockerfile
             FROM scratch
