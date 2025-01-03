@@ -179,6 +179,7 @@ RUN ln -s sysroot/ostree /ostree
 # Создаём пользователя "atomic" и задаём пароль "atomic"
 RUN useradd -m -G wheel -s /bin/bash atomic && \
     echo "atomic:atomic" | chpasswd && \
+    echo "root:root" | chpasswd && \
     mkdir -p /var/home/atomic && chown atomic:atomic /var/home/atomic
 
 # 12) Создаём каталог /sysroot/ostree/repo и инициализируем его
