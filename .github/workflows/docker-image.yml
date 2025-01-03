@@ -45,7 +45,6 @@ jobs:
       # 9. Извлечение содержимого OSTree-коммита
       - name: Extract OSTree commit
         run: |
-          mkdir -p extracted_root
           ostree checkout --repo=./ostree_repo alt/atomic ./extracted_root
 
       # 10. Создание нового контейнерного образа
