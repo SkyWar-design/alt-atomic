@@ -48,10 +48,14 @@ jobs:
       - name: Use OSTree container
         run: |
           docker run --rm \
-            -v $(pwd):/workspace \
-            -w /workspace \
-            ostree:v2024.9 \
-            ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root
+          -v $(pwd):/workspace \
+          -w /workspace \
+          ostree:v2024.9 \
+          ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root
+          echo "FROM scratch" > /workspace/extracted_root/Dockerfile
+          echo "LABEL containers.bootc=1" >> /workspace/extracted_root/Dockerfile
+          echo "COPY . /" >> /workspace/extracted_root/Dockerfile
+          echo 'CMD ["/bin/bash"]' >> /workspace/extracted_root/Dockerfile
 
       # 10. Создание нового контейнерного образа
       - name: Build system container image
