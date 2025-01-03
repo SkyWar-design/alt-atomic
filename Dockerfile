@@ -157,7 +157,13 @@ RUN mkdir /var/lib/apt/lists/partial
 
 # Удаляем fstab
 RUN rm -f /etc/fstab
+
+# Создаем папки
 RUN mkdir /sysroot
+RUN mkdir -p /usr/lib/bootupd/updates
+
+# Копируем bootupd (grub-утилита)
+COPY bootupd/ /usr/lib/bootupd/updates/
 
 #
 # --- Переносим root и home в /var, если нужно, чтобы они были writable ---
@@ -196,18 +202,11 @@ RUN mkdir -p /tmp/rootfscopy && \
 RUN mkdir -p /tmp/rootfscopy/tmp
 RUN mkdir -p /tmp/rootfscopy/boot
 
-## --- Добавляем метаданные для компонента BIOS в формате JSON ---
-RUN mkdir -p /usr/lib/bootupd/updates && \
-    echo '{ "timestamp":"2024-11-27T10:13:15Z", "version": "1.0.0", "description": "Initial BIOS component for bootupd" }' > /usr/lib/bootupd/updates/BIOS.json
-
-# --- Добавляем метаданные для компонента EFI в формате JSON ---
-RUN echo '{ "timestamp":"2024-11-27T10:13:15Z", "version": "1.0.0", "description": "Initial EFI component for bootupd" }' > /usr/lib/bootupd/updates/EFI.json
-
 # 14) Делаем ostree-коммит уже в /sysroot/ostree/repo
 RUN ostree --repo=/sysroot/ostree/repo commit \
     --branch=alt/atomic \
     --subject "Initial ALT Atomic Commit" \
     --tree=dir=/tmp/rootfscopy
 
-WORKDIR ~
+WORKDIR /
 LABEL containers.bootc=1
