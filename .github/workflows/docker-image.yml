@@ -42,9 +42,9 @@ jobs:
 #          echo '{"auths":{"ghcr.io":{"auth":"$(echo -n "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}" | base64 -w 0)"}}}' > auth.json
 #
 #      # 9. Установка новой версии OSTree через контейнер
-#      # 3. Сборка образа с OSTree
-#      - name: Build OSTree Docker image
-#        run: docker build -f Dockerfile.ostree -t ostree:v2024.9 .
+      # 3. Сборка образа с OSTree
+      - name: Build OSTree Docker image
+        run: docker build -f Dockerfile.ostree -t ostree:v2024.9 .
 
       - name: Use OSTree container
         run: |
