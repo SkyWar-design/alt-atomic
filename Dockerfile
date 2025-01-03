@@ -166,13 +166,14 @@ RUN mkdir -p /usr/lib/bootupd/updates
 COPY bootupd/ /usr/lib/bootupd/updates/
 
 #
-# --- Переносим root и home в /var, если нужно, чтобы они были writable ---
+# --- Настройка паок ---
 #
-RUN mkdir -p /var/root /var/home
+RUN mkdir -p /var/root /var/home /mnt /media /opt
+RUN ln -s var/mnt /mnt
+RUN ln -s var/opt /opt
+RUN ln -s run/media /media
 RUN rm -rf /root && ln -s var/root /root
 RUN rm -rf /home && ln -s var/home /home
-
-# --- Создаем ссылку на ostree ---
 RUN ln -s /sysroot/ostree /ostree
 
 # Создаём пользователя "atomic" и задаём пароль "atomic"
@@ -199,6 +200,7 @@ RUN mkdir -p /tmp/rootfscopy && \
       / /tmp/rootfscopy/
 
 # Создаем пустые папки после копирования
+RUN mkdir -p /tmp/rootfscopy/var/tmp
 RUN mkdir -p /tmp/rootfscopy/tmp
 RUN mkdir -p /tmp/rootfscopy/boot
 

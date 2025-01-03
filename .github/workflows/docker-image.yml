@@ -56,19 +56,26 @@ jobs:
           -v $(pwd):/workspace \
           -w /workspace \
           ostree:v2024.9 \
-          sh -c "ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root && \
-                echo 'FROM scratch' > /workspace/extracted_root/Dockerfile && \
-                echo 'LABEL containers.bootc=1' >> /workspace/extracted_root/Dockerfile && \
-                echo 'COPY . /' >> /workspace/extracted_root/Dockerfile && \
-                echo 'CMD [\"/bin/bash\"]' >> /workspace/extracted_root/Dockerfile && \
-                docker build -t ghcr.io/skywar-design/alt-atomic:img-latest /workspace/extracted_root && \
-                echo \"${GITHUB_TOKEN}\" | docker login ghcr.io -u \"${GITHUB_OWNER}\" --password-stdin && \
-                docker push ghcr.io/skywar-design/alt-atomic:img-latest"
-
-      # 10. Создание нового контейнерного образа
-#      - name: Build system container image
-#        run: docker build -t ghcr.io/skywar-design/alt-atomic:img-latest ./extracted_root
-##
-##      # 11. Отправка нового контейнерного образа в реестр
-#      - name: Push system container image to GHCR
-#        run: docker push ghcr.io/skywar-design/alt-atomic:img-latest
+          sh -c "
+            # Perform ostree checkout
+            ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root
+          
+            # Copy the OSTree repository into the extracted_root
+            mkdir -p /workspace/extracted_root/ostree
+            cp -a /workspace/ostree_repo /workspace/extracted_root/ostree/repo
+          
+            # Prepare the Dockerfile
+            cat <<EOF > /workspace/extracted_root/Dockerfile
+            FROM scratch
+            LABEL containers.bootc=1
+            COPY . /
+            CMD [\"/bin/bash\"]
+            EOF
+          
+            # Build the Docker image
+            docker build -t ghcr.io/skywar-design/alt-atomic:img-latest /workspace/extracted_root
+          
+            # Push the image to GitHub Container Registry
+            echo \"${GITHUB_TOKEN}\" | docker login ghcr.io -u \"${GITHUB_OWNER}\" --password-stdin
+            docker push ghcr.io/skywar-design/alt-atomic:img-latest
+          "
