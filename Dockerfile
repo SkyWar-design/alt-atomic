@@ -163,7 +163,7 @@ RUN mkdir /sysroot
 RUN mkdir -p /usr/lib/bootupd/updates
 
 # Копируем bootupd (grub-утилита)
-COPY bootupd/ /usr/lib/bootupd/updates/
+COPY bootupd/ /usr/lib/bootupd/
 
 #
 # --- Настройка паок ---
