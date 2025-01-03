@@ -201,11 +201,11 @@ RUN mkdir -p /tmp/rootfscopy && \
       / /tmp/rootfscopy/
 
 # Создаем пустые папки после копирования
-#RUN mkdir -p /tmp/rootfscopy/run
-#RUN mkdir -p /tmp/rootfscopy/dev
-#RUN mkdir -p /tmp/rootfscopy/proc
+RUN mkdir -p /tmp/rootfscopy/run
+RUN mkdir -p /tmp/rootfscopy/dev
+RUN mkdir -p /tmp/rootfscopy/proc
 RUN mkdir -p /tmp/rootfscopy/var/tmp
-#RUN mkdir -p /tmp/rootfscopy/tmp
+RUN mkdir -p /tmp/rootfscopy/tmp
 RUN mkdir -p /tmp/rootfscopy/boot
 
 # 14) Делаем ostree-коммит уже в /sysroot/ostree/repo
