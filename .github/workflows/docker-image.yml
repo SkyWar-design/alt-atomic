@@ -60,14 +60,10 @@ jobs:
             ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root && \
             mkdir -p /workspace/extracted_root/sysroot/ostree/repo  && \
             cp -a /workspace/ostree_repo/* /workspace/extracted_root/sysroot/ostree/repo/  && \
-            ls -la /workspace/extracted_root && \
-            ls -la /workspace/extracted_root/sysroot/ostree/repo/refs/heads && \
-            cat <<EOF > /workspace/extracted_root/Dockerfile
-            FROM scratch
-            LABEL containers.bootc=1
-            COPY . /
-            CMD [\"/bin/bash\"]
-            EOF  && \
+            echo 'FROM scratch' > /workspace/extracted_root/Dockerfile && \
+            echo 'LABEL containers.bootc=1' >> /workspace/extracted_root/Dockerfile && \
+            echo 'COPY . /' >> /workspace/extracted_root/Dockerfile && \
+            echo 'CMD [\"/bin/bash\"]' >> /workspace/extracted_root/Dockerfile && \
             ls -la /workspace/extracted_root/sysroot/ostree/repo/refs/heads && \
             docker build --no-cache -t ghcr.io/skywar-design/alt-atomic:img-latest /workspace/extracted_root  && \
             echo \"${GITHUB_TOKEN}\" | docker login ghcr.io -u \"${GITHUB_OWNER}\" --password-stdin  && \
