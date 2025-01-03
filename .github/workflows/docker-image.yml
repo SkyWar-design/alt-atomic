@@ -42,15 +42,21 @@ jobs:
       - name: Remove temporary container
         run: docker rm temp-container
 
-      # 9. Извлечение содержимого OSTree-коммита
-      - name: Extract OSTree commit
+      - name: Build OSTree Docker image
+        run: docker build -f Dockerfile.ostree -t ostree:v2024.9 .
+
+      - name: Use OSTree container
         run: |
-          ostree checkout --repo=./ostree_repo alt/atomic ./extracted_root
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ostree:v2024.9 \
+            ostree checkout --repo=/workspace/ostree_repo alt/atomic ./extracted_root
 
       # 10. Создание нового контейнерного образа
-      - name: Build system container image
-        run: docker build -t ghcr.io/skywar-design/alt-atomic:img-latest ./extracted_root
-
-      # 11. Отправка нового контейнерного образа в реестр
-      - name: Push system container image to GHCR
-        run: docker push ghcr.io/skywar-design/alt-atomic:img-latest
+#      - name: Build system container image
+#        run: docker build -t ghcr.io/skywar-design/alt-atomic:img-latest ./extracted_root
+#
+#      # 11. Отправка нового контейнерного образа в реестр
+#      - name: Push system container image to GHCR
+#        run: docker push ghcr.io/skywar-design/alt-atomic:img-latest
