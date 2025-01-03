@@ -3,6 +3,7 @@ FROM alpine:3.21
 # Установка минимального набора инструментов и зависимостей
 RUN apk add --no-cache \
     ostree \
+    docker \
     fuse \
     fuse3
 
