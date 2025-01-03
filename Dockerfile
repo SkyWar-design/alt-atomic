@@ -174,7 +174,7 @@ RUN ln -s var/opt /opt
 RUN ln -s run/media /media
 RUN rm -rf /root && ln -s var/root /root
 RUN rm -rf /home && ln -s var/home /home
-RUN ln -s /sysroot/ostree /ostree
+RUN ln -s sysroot/ostree /ostree
 
 # Создаём пользователя "atomic" и задаём пароль "atomic"
 RUN useradd -m -G wheel -s /bin/bash atomic && \
