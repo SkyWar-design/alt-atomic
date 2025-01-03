@@ -38,10 +38,6 @@ jobs:
       - name: Copy OSTree repo from container repo
         run: docker cp temp-container:/sysroot/ostree/repo ./ostree_repo
 
-      # 7. Копирование репозитория OSTree из контейнера на хост
-      - name: Copy OSTree repo from container repo copy
-        run: docker cp temp-container:/sysroot/ostree/repo ./ostree_repo_copy
-
       # 8. Удаление временного контейнера
       - name: Remove temporary container
         run: docker rm temp-container
@@ -63,7 +59,8 @@ jobs:
           sh -c "
             ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root && \
             mkdir -p /workspace/extracted_root/sysroot/ostree/repo  && \
-            cp -a /workspace/ostree_repo_copy/* /workspace/extracted_root/sysroot/ostree/repo/  && \
+            cp -a /workspace/ostree_repo/* /workspace/extracted_root/sysroot/ostree/repo/  && \
+            ls -la /workspace/extracted_root && \
             ls -la /workspace/extracted_root/sysroot/ostree/repo/refs/heads && \
             cat <<EOF > /workspace/extracted_root/Dockerfile
             FROM scratch
@@ -71,7 +68,8 @@ jobs:
             COPY . /
             CMD [\"/bin/bash\"]
             EOF  && \
-            docker build -t ghcr.io/skywar-design/alt-atomic:img-latest /workspace/extracted_root  && \
+            ls -la /workspace/extracted_root/sysroot/ostree/repo/refs/heads && \
+            docker build --no-cache -t ghcr.io/skywar-design/alt-atomic:img-latest /workspace/extracted_root  && \
             echo \"${GITHUB_TOKEN}\" | docker login ghcr.io -u \"${GITHUB_OWNER}\" --password-stdin  && \
             docker push ghcr.io/skywar-design/alt-atomic:img-latest
           "
