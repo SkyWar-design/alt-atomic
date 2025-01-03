@@ -179,7 +179,6 @@ RUN ln -s sysroot/ostree /ostree
 # Создаём пользователя "atomic" и задаём пароль "atomic"
 RUN useradd -m -G wheel -s /bin/bash atomic && \
     echo "atomic:atomic" | chpasswd && \
-    echo "root:root" | chpasswd && \
     mkdir -p /var/home/atomic && chown atomic:atomic /var/home/atomic
 
 # 12) Создаём каталог /sysroot/ostree/repo и инициализируем его
@@ -201,12 +200,12 @@ RUN mkdir -p /tmp/rootfscopy && \
       / /tmp/rootfscopy/
 
 # Создаем пустые папки после копирования
-RUN mkdir -p /tmp/rootfscopy/run
-RUN mkdir -p /tmp/rootfscopy/dev
-RUN mkdir -p /tmp/rootfscopy/proc
+RUN #mkdir -p /tmp/rootfscopy/run
+RUN #mkdir -p /tmp/rootfscopy/dev
+RUN #mkdir -p /tmp/rootfscopy/proc
 RUN mkdir -p /tmp/rootfscopy/var/tmp
-RUN mkdir -p /tmp/rootfscopy/tmp
 RUN mkdir -p /tmp/rootfscopy/boot
+RUN #mkdir -p /tmp/rootfscopy/tmp
 
 # 14) Делаем ostree-коммит уже в /sysroot/ostree/repo
 RUN ostree --repo=/sysroot/ostree/repo commit \
