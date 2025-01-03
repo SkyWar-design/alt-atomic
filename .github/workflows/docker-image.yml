@@ -52,7 +52,6 @@ jobs:
           -w /workspace \
           ostree:v2024.9 \
           sh -c "ostree checkout --repo=/workspace/ostree_repo alt/atomic /workspace/extracted_root && \
-                chmod -R u+rwX /workspace/extracted_root/boot && \
                 echo 'FROM scratch' > /workspace/extracted_root/Dockerfile && \
                 echo 'LABEL containers.bootc=1' >> /workspace/extracted_root/Dockerfile && \
                 echo 'COPY . /' >> /workspace/extracted_root/Dockerfile && \

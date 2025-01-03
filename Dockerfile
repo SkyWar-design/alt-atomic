@@ -136,7 +136,6 @@ RUN wget https://github.com/containers/bootc/archive/refs/tags/v1.1.3.zip -O boo
 
 # Генерация initramfs для «первого» найденного ядра
 # RUN dracut --force --kver "$(ls /usr/lib/modules | head -n 1)"
-
 RUN KVER="$(ls /usr/lib/modules | head -n 1)" && \
     dracut --force \
            --kver "$KVER" \
@@ -149,6 +148,9 @@ RUN set -ex && \
     KERNEL_VERSION="$(ls /usr/lib/modules | head -n 1)" && \
     cp "/boot/vmlinuz-${KERNEL_VERSION}"       "/usr/lib/modules/${KERNEL_VERSION}/vmlinuz" && \
     cp "/boot/initramfs-${KERNEL_VERSION}.img" "/usr/lib/modules/${KERNEL_VERSION}/initramfs.img"
+
+# Удаление содержимого папки /boot, но оставляем саму папку
+RUN rm -rf /boot/* || true
 
 # Восстанавливаем папку для apt
 RUN mkdir /var/lib/apt/lists/partial
