@@ -61,9 +61,9 @@ jobs:
                 echo 'LABEL containers.bootc=1' >> /workspace/extracted_root/Dockerfile && \
                 echo 'COPY . /' >> /workspace/extracted_root/Dockerfile && \
                 echo 'CMD [\"/bin/bash\"]' >> /workspace/extracted_root/Dockerfile && \
-                docker build -t ghcr.io/${GITHUB_OWNER}/alt-atomic:img-latest /workspace/extracted_root && \
+                docker build -t ghcr.io/skywar-design/alt-atomic:img-latest /workspace/extracted_root && \
                 echo \"${GITHUB_TOKEN}\" | docker login ghcr.io -u \"${GITHUB_OWNER}\" --password-stdin && \
-                docker push ghcr.io/${GITHUB_OWNER}/alt-atomic:img-latest"
+                docker push ghcr.io/skywar-design/alt-atomic:img-latest"
 
       # 10. Создание нового контейнерного образа
 #      - name: Build system container image
