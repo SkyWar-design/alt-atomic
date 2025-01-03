@@ -150,7 +150,7 @@ RUN set -ex && \
     cp "/boot/initramfs-${KERNEL_VERSION}.img" "/usr/lib/modules/${KERNEL_VERSION}/initramfs.img"
 
 # Удаление содержимого папки /boot, но оставляем саму папку
-RUN rm -rf /boot/* || true
+# RUN rm -rf /boot/* || true
 
 # Восстанавливаем папку для apt
 RUN mkdir /var/lib/apt/lists/partial
@@ -185,11 +185,16 @@ RUN mkdir -p /tmp/rootfscopy && \
       --exclude=/proc \
       --exclude=/sys \
       --exclude=/run \
+      --exclude=/boot \
       --exclude=/tmp \
       --exclude=/var/tmp \
       --exclude=/var/lib/containers \
       --exclude=/output \
       / /tmp/rootfscopy/
+
+# Создаем пустые папки после копирования
+RUN mkdir -p /tmp/rootfscopy/tmp
+RUN mkdir -p /tmp/rootfscopy/boot
 
 ## --- Добавляем метаданные для компонента BIOS в формате JSON ---
 RUN mkdir -p /usr/lib/bootupd/updates && \
