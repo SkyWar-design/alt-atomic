@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     bluez \
     podman \
     btrfs-progs \
+    gnome3-minimal \
     kbd \
     mc \
     nano \
