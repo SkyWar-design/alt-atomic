@@ -6,6 +6,8 @@ echo "Running main.sh..."
 ./install/branding.sh
 ./install/settings.sh
 ./install/kernel.sh
+./make/zstd.sh
+./make/cargo.sh
 ./make/bootupd.sh
 ./make/bootc.sh
 ./install/ostree.sh

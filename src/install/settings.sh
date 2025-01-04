@@ -19,8 +19,7 @@ mkdir -p /var/home/atomic && chown atomic:atomic /var/home/atomic
 mkdir /var/lib/apt/lists/partial
 rm -f /etc/fstab
 mkdir /sysroot
-mkdir -p /usr/lib/bootupd/updates
-cp -a ../source/bootupd/ /usr/lib/bootupd/
+cp -a ./source/bootupd/ /usr/lib/
 mkdir -p /usr/local/bin
 mkdir -p /usr/lib/ostree
 

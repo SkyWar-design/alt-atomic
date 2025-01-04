@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Running make.sh..."
+echo "Running bootupd.sh"
 
 # Определяем версии и пути
 BOOTUPD_VERSION="0.2.25"
@@ -46,4 +46,4 @@ echo "Cleaning up..."
 cd /tmp
 rm -rf "${BOOTUPD_BUILD_DIR}" "${BOOTUPD_ARCHIVE}"
 
-echo "make.sh completed successfully."
+echo "End bootupd"
