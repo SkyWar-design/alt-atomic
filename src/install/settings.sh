@@ -31,4 +31,8 @@ echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 mkdir -p /etc/systemd/system/local-fs.target.wants/
 ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service
 
+# Расширение лимитов на число открытых файлов для всех юзеров. (при обновлении системы открывается большое число файлов/слоев)
+grep -qE "^\* hard nofile 97816$" /etc/security/limits.conf || echo "* hard nofile 97816" >> /etc/security/limits.conf
+grep -qE "^\* soft nofile 97816$" /etc/security/limits.conf || echo "* soft nofile 97816" >> /etc/security/limits.conf
+
 echo "End settings.sh"
