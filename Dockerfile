@@ -4,7 +4,6 @@ FROM registry.altlinux.org/sisyphus/base:latest
 RUN apt-get update && apt-get install -y \
     mount \
     bluez \
-    htop \
     podman \
     btrfs-progs \
     mc \
