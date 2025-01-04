@@ -59,12 +59,15 @@ RUN apt-get update && apt-get install -y \
     rsync \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Копируем скрипты
 COPY src /src
 
+# Устанавливаем переменные окружения
 ENV PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/lib/pkgconfig"
 ENV PATH="/root/.cargo/bin:${PATH}"
 
+# Делаем главный скрипт исполняемым и запускаем его
 WORKDIR /src
-RUN chmod +x main.sh
-CMD ["./main.sh"]
+RUN chmod +x main.sh && ./main.sh
+
 LABEL containers.bootc=1
