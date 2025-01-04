@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     podman \
     btrfs-progs \
     mc \
-    htop \
     nano \
     passwd \
     efivar \
