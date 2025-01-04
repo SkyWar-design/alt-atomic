@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     shim-unsigned  \
     libselinux \
     policycoreutils \
-    selinux-utils \
+    libselinux-utils \
     shim-signed \
     efitools \
     glibc-utils \
