@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y \
     bubblewrap \
     efivar \
     shim-unsigned  \
+    libselinux \
+    policycoreutils \
+    selinux-utils \
     shim-signed \
     efitools \
     glibc-utils \
