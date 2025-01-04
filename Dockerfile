@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     mc \
     nano \
     passwd \
+    bubblewrap \
     efivar \
     shim-unsigned  \
     shim-signed \
