@@ -1,8 +1,17 @@
 #!/bin/bash
+
+# любая ошибка остановит выполнение
 set -e
 
 echo "Running main.sh..."
 
+# Пакеты
+./packages/apt_prepare.sh
+./packages/base.sh           # базовые пакеты для работы системы
+./packages/DE/gnome.sh       # почему бы и нет
+./packages/apt_ending.sh
+
+# Настройка
 ./install/branding.sh
 ./install/settings.sh
 ./install/kernel.sh
