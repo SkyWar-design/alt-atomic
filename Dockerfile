@@ -4,6 +4,7 @@ FROM registry.altlinux.org/sisyphus/base:latest
 RUN apt-get update && apt-get install -y \
     mount \
     bluez \
+    htop \
     podman \
     btrfs-progs \
     mc \
@@ -66,6 +67,7 @@ COPY src /src
 ENV PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/lib/pkgconfig"
 ENV PATH="/root/.cargo/bin:${PATH}"
 
+# В глановм Dockerfile делаем один RUN запуск потому что увеличние их числа - добавляет ненужные слои и увеличивает обьем образа
 # Делаем главный скрипт исполняемым и запускаем его
 WORKDIR /src
 RUN chmod +x main.sh && ./main.sh
