@@ -20,7 +20,7 @@ echo "Generating initramfs for kernel version $KERNEL_VERSION..."
 dracut --force \
        --kver "$KERNEL_VERSION" \
        --add "qemu ostree virtiofs btrfs" \
-       --add-drivers "virtio_blk virtio_pci virtio_net" \
+       --add-drivers "virtio_blk virtio_pci virtio_net virtio_gpu drm i915 amdgpu" \
        "${BOOT_DIR}/initramfs-${KERNEL_VERSION}.img"
 
 # Копируем vmlinuz и initramfs
