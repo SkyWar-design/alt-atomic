@@ -3,7 +3,8 @@ set -e
 
 echo "Running settings.sh"
 
-mkdir -p /var/root /var/home /mnt /media /opt
+#mkdir -p /var/root /var/home /mnt /media /opt
+mkdir -p /var/root /var/home
 ln -s var/mnt /mnt
 ln -s var/opt /opt
 ln -s run/media /media
