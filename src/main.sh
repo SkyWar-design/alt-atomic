@@ -12,6 +12,7 @@ echo "Running main.sh..."
 ./packages/DE/mate.sh
 ./packages/apt_ending.sh
 
+
 # Настройка
 ./configuration/branding.sh
 ./configuration/settings.sh
