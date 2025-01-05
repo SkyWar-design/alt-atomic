@@ -6,9 +6,10 @@ set -e
 echo "Running main.sh..."
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # Абсолютный путь к директории скрипта
-CONFIG_FILE="$SCRIPT_DIR/../source/initrd.mk.oem"  # Абсолютный путь к initrd.mk.oem
+CONFIG_FILE="$SCRIPT_DIR/source/initrd.mk.oem"  # Абсолютный путь к initrd.mk.oem
 
 echo "$CONFIG_FILE"
+cat "$CONFIG_FILE"
 # Пакеты
 #./packages/apt_prepare.sh
 #./packages/base.sh           # базовые пакеты для работы системы
