@@ -5,7 +5,7 @@ set -e
 
 echo "Running main.sh..."
 
-cat "/src/configuration/source/initrd.mk.oem"
+cat "/src/source/initrd.mk.oem"
 ## Пакеты
 #./packages/apt_prepare.sh
 #./packages/base.sh           # базовые пакеты для работы системы
