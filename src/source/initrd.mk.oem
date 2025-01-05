@@ -32,4 +32,3 @@ MODULES_TRY_ADD += virtio_input.ko
 MODULES_TRY_ADD += drivers/video/fbdev
 MODULES_TRY_ADD += crc32_generic.ko
 MODULES_TRY_ADD += ata_piix.ko
-FEATURES += fsck
