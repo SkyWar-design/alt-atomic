@@ -6,8 +6,8 @@ echo "Running kernel_setup.sh..."
 # Определяем пути
 KERNEL_DIR="/usr/lib/modules"
 BOOT_DIR="/boot"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # Абсолютный путь к директории скрипта
-CONFIG_FILE="$SCRIPT_DIR/../source/initrd.mk.oem"  # Абсолютный путь к initrd.mk.oem
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/source/initrd.mk.oem"  # Абсолютный путь к initrd.mk.oem
 
 # Определяем версии ядра
 kver=$(rpm -qa 'kernel-image*' --qf '%{version}-%{name}-%{release}\n' | sed 's/kernel-image-//')
