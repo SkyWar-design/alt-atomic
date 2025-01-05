@@ -6,6 +6,8 @@ echo "Running kernel_setup.sh..."
 # Определяем пути
 KERNEL_DIR="/usr/lib/modules"
 BOOT_DIR="/boot"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # Абсолютный путь к директории скрипта
+CONFIG_FILE="$SCRIPT_DIR/../source/initrd.mk.oem"  # Абсолютный путь к initrd.mk.oem
 
 # Определяем версии ядра
 kver=$(rpm -qa 'kernel-image*' --qf '%{version}-%{name}-%{release}\n' | sed 's/kernel-image-//')
@@ -21,7 +23,7 @@ for KVER in $kver; do
     echo "Generating initramfs for kernel version $KVER..."
 
     # Используем make-initrd для создания initramfs
-    make-initrd -N -v -k "$KVER" AUTODETECT= -c "$(dirname "$0")/../source/initrd.mk.oem" \
+    make-initrd -N -v -k "$KVER" AUTODETECT= -c "$CONFIG_FILE" \
         || { echo "** Error: make-initrd failed for $KVER" >&2; exit 1; }
 
     # Определяем имя файла ядра в зависимости от архитектуры
