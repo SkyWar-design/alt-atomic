@@ -21,7 +21,7 @@ for KVER in $kver; do
     echo "Generating initramfs for kernel version $KVER..."
 
     # Используем make-initrd для создания initramfs
-    make-initrd -N -v -k "$KVER" AUTODETECT= -c ./source/initrd.mk.oem \
+    make-initrd -N -v -k "$KVER" AUTODETECT= -c "$(dirname "$0")/../source/initrd.mk.oem" \
         || { echo "** Error: make-initrd failed for $KVER" >&2; exit 1; }
 
     # Определяем имя файла ядра в зависимости от архитектуры
