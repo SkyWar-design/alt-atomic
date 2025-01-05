@@ -3,49 +3,40 @@ set -euo pipefail
 
 echo "Running kernel_setup.sh..."
 
-# Определяем пути
+# Находим версию ядра
 KERNEL_DIR="/usr/lib/modules"
 BOOT_DIR="/boot"
-CONFIG_FILE="/src/source/initrd.mk.oem"  # Абсолютный путь к initrd.mk.oem
 
-# Определяем версии ядра
-kver=$(rpm -qa 'kernel-image*' --qf '%{version}-%{name}-%{release}\n' | sed 's/kernel-image-//')
+echo "Detecting kernel version..."
+KERNEL_VERSION=$(ls "$KERNEL_DIR" | head -n 1)
 
-if [ -z "$kver" ]; then
-    echo "** No kernel versions found" >&2
+if [[ -z "$KERNEL_VERSION" ]]; then
+    echo "Error: No kernel version found in $KERNEL_DIR."
     exit 1
 fi
 
-cd "$BOOT_DIR"
+MODULES=$(find "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers" \( \
+        -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/hid/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/gpu/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/pci/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/mmc/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/usb/host/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/usb/storage/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/nvmem/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/nvme/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/virtio/*" \
+        -o -path "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers/video/fbdev/*" \
+    \) -type f -name '*.ko*' | sed 's:.*/::')
 
-for KVER in $kver; do
-    echo "Generating initramfs for kernel version $KVER..."
+dracut --force \
+       --kver "$KERNEL_VERSION" \
+       --add "qemu ostree virtiofs btrfs base overlayfs bluetooth" \
+       --add-drivers "virtiofs.ko ext4 btrfs.ko ahci.ko sd_mod.ko ahci_platform.ko sd_mod.ko evdev.ko virtio_scsi.ko virtio_blk.ko virtio-rng virtio_net.ko virtio-gpu.ko virtio-mmio.ko virtio_pci.ko virtio_console.ko virtio_input.ko crc32_generic.ko ata_piix.ko $MODULES" \
+       "${BOOT_DIR}/initramfs-${KERNEL_VERSION}.img"
 
-    # Используем make-initrd для создания initramfs
-    make-initrd -N -v -k "$KVER" AUTODETECT= -c "$CONFIG_FILE" \
-        || { echo "** Error: make-initrd failed for $KVER" >&2; exit 1; }
-
-    # Определяем имя файла ядра в зависимости от архитектуры
-    case "$(uname -m)" in
-    e2k*)
-        kname="image";;
-    *)
-        kname="vmlinuz";;
-    esac
-
-    # Создаем символические ссылки для ядра и initramfs
-    echo "Creating symbolic links..."
-    rm -f "$kname" initrd.img
-    ln -s "$kname-$KVER" "$kname" || true
-    ln -s "initrd-$KVER.img" "initrd.img"
-done
-
-# Копируем файлы в KERNEL_DIR
-echo "Copying kernel and initramfs to $KERNEL_DIR..."
-for KVER in $kver; do
-    mkdir -p "$KERNEL_DIR/$KVER"
-    cp "$BOOT_DIR/vmlinuz-$KVER" "$KERNEL_DIR/$KVER/vmlinuz"
-    cp "$BOOT_DIR/initrd-$KVER.img" "$KERNEL_DIR/$KVER/initramfs.img"
-done
+# Копируем vmlinuz и initramfs
+echo "Copying vmlinuz and initramfs..."
+cp "${BOOT_DIR}/vmlinuz-${KERNEL_VERSION}" "${KERNEL_DIR}/${KERNEL_VERSION}/vmlinuz"
+cp "${BOOT_DIR}/initramfs-${KERNEL_VERSION}.img" "${KERNEL_DIR}/${KERNEL_VERSION}/initramfs.img"
 
 echo "End kernel_setup.sh"
