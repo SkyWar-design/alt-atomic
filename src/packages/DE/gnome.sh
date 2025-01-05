@@ -2,7 +2,7 @@
 
 echo "Installing GNOME packages"
 
-apt-get install -y gnome3-minimal
+apt-get install -y gnome-super-minimal
 
 # Неожиданно Alt linux в /var/lib/openvpn/dev записывает устройство urandom
 # устройства запрещено включать в коммит, только файлы и сим-линки
