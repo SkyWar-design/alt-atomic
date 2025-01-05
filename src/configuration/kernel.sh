@@ -23,6 +23,7 @@ dracut --force \
        --add-drivers "virtio_blk virtio_pci virtio_net virtio_gpu drm i915 amdgpu snd_hda_intel snd_hda_codec snd_hda_core snd_pcm snd_timer soundcore joydev evdev btrfs overlay fuse virtio_rng virtio_console virtio_balloon net_failover virtio_dma_buf" \
        "${BOOT_DIR}/initramfs-${KERNEL_VERSION}.img"
 
+
 # Копируем vmlinuz и initramfs
 echo "Copying vmlinuz and initramfs..."
 cp "${BOOT_DIR}/vmlinuz-${KERNEL_VERSION}" "${KERNEL_DIR}/${KERNEL_VERSION}/vmlinuz"
