@@ -40,4 +40,7 @@ ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-f
 grep -qE "^\* hard nofile 978160$" /etc/security/limits.conf || echo "* hard nofile 978160" >> /etc/security/limits.conf
 grep -qE "^\* soft nofile 978160$" /etc/security/limits.conf || echo "* soft nofile 978160" >> /etc/security/limits.conf
 
+# Локаль
+echo 'LANG=en_US.UTF-8' | tee /etc/locale.conf /etc/sysconfig/i18n
+
 echo "End settings.sh"
