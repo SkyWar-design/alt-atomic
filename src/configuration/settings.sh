@@ -4,10 +4,14 @@ set -e
 echo "Running settings.sh"
 
 #mkdir -p /var/root /var/home /mnt /media /opt
-mkdir -p /var/root /var/home
-ln -s var/mnt /mnt
-ln -s var/opt /opt
-ln -s run/media /media
+#ln -s var/mnt /mnt
+#ln -s var/opt /opt
+#ln -s run/media /media
+mkdir -p /var/root /var/home /var/mnt /var/opt
+rm -rf /mnt && ln -s var/mnt /mnt
+rm -rf /opt && ln -s var/opt /opt
+rm -rf /media && ln -s run/media /media
+
 rm -rf /root && ln -s var/root /root
 rm -rf /home && ln -s var/home /home
 ln -s sysroot/ostree /ostree
