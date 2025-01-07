@@ -64,6 +64,7 @@ apt-get install -y \
     rsync \
     plymouth \
     mesa-dri-drivers \
-    glxinfo
+    glxinfo \
+    ntp
 
 echo "End installing base packages"

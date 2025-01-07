@@ -5,12 +5,10 @@ set -e
 
 echo "Running main.sh..."
 
-# Пакеты
+# Базовые пакеты для работы системы
 ./packages/apt_prepare.sh
-./packages/base.sh           # базовые пакеты для работы системы
+./packages/base.sh
 ./packages/DE/gnome.sh
-#./packages/DE/mate.sh
-./packages/fpatpak.sh
 ./packages/apt_ending.sh
 
 # Настройка
