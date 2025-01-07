@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e  # Скрипт остановится при первой ошибке
+set -e
 
 echo "Installing Flatpak"
 apt-get install -y flatpak
