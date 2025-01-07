@@ -10,8 +10,8 @@ echo "Running main.sh..."
 ./packages/base.sh           # базовые пакеты для работы системы
 ./packages/DE/gnome.sh
 #./packages/DE/mate.sh
+./packages/DE/fpatpak.sh
 ./packages/apt_ending.sh
-
 
 # Настройка
 ./configuration/branding.sh

@@ -62,6 +62,8 @@ apt-get install -y \
     kernel-modules-drm-6.12 \
     kernel-headers-6.12 \
     rsync \
-    plymouth
+    plymouth \
+    mesa-dri-drivers \
+    glxinfo
 
 echo "End installing base packages"
