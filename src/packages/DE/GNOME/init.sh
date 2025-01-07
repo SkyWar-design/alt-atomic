@@ -2,7 +2,11 @@
 
 echo "Installing GNOME packages"
 
-apt-get install -y gnome3-minimal gnome-tweaks fonts-ttf-liberation fonts-ttf-dejavu
+apt-get install -y gnome3-minimal \
+gnome-software-disable-updates \
+gnome-tweaks \
+fonts-ttf-liberation \
+fonts-ttf-dejavu
 
 # Обновление шрифтов
 fc-cache -fv
@@ -18,4 +22,5 @@ ln -s /usr/lib/systemd/system/gdm.service /usr/lib/systemd/system/display-manage
 
 # Установка Flatpak приложений
 ./flatpak.sh
+
 echo "End installing GNOME packages"
