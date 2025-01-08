@@ -60,6 +60,8 @@ apt-get install -y \
     dracut \
     kernel-image-6.12 \
     kernel-modules-drm-6.12 \
+    kernel-modules-drm-nouveau-6.12 \
+    kernel-modules-drm-radeon-6.12 \
     kernel-headers-6.12 \
     rsync \
     plymouth \
