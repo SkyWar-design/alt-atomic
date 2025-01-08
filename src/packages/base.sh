@@ -67,6 +67,7 @@ apt-get install -y \
     plymouth \
     mesa-dri-drivers \
     glxinfo \
+    inxi \
     ntp
 
 echo "End installing base packages"
