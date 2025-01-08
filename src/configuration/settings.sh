@@ -7,7 +7,7 @@ echo "Running settings.sh"
 #ln -s var/mnt /mnt
 #ln -s var/opt /opt
 #ln -s run/media /media
-mkdir -p /var/root /var/home /var/mnt /var/opt /etc/sudoers.d
+mkdir -p /var/root /var/home /var/mnt /var/opt
 rm -rf /mnt && ln -s var/mnt /mnt
 rm -rf /opt && ln -s var/opt /opt
 rm -rf /media && ln -s run/media /media
