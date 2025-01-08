@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
-# Данный скрипт добавляет юзеров в необходимые группы, срабатывает один раз
+# Данный скрипт добавляет юзеров в необходимые группы, срабатывает один раз (или по версии).
 GROUP_SETUP_VER=1
 GROUP_SETUP_VER_FILE="/etc/atomic/atomic-groups"
-GROUP_SETUP_VER_RAN=$(cat "$GROUP_SETUP_VER_FILE")
+
+# Проверяем выполнение
+if [ -f "$GROUP_SETUP_VER_FILE" ]; then
+    GROUP_SETUP_VER_RAN="$(cat "$GROUP_SETUP_VER_FILE")"
+else
+    GROUP_SETUP_VER_RAN=""
+fi
 
 # Проверяем выполнение
 if [[ -f $GROUP_SETUP_VER_FILE && "$GROUP_SETUP_VER" = "$GROUP_SETUP_VER_RAN" ]]; then
@@ -22,7 +28,6 @@ append_group() {
 append_group docker
 append_group lxd
 append_group libvirt
-append_group fuse
 
 # Получаем всех пользователей из группы "users" (GID 100)
 userarray=($(getent group 100 | cut -d ":" -f 4 | tr ',' '\n'))
@@ -33,9 +38,8 @@ do
   usermod -aG docker $user
   usermod -aG lxd $user
   usermod -aG libvirt $user
-  usermod -aG fuse $user
 done
 
-# Запоминаем выполнение
+# Запоминаем выполнение вместе с версией скрипта
 echo "Writing state file"
 echo "$GROUP_SETUP_VER" > "$GROUP_SETUP_VER_FILE"

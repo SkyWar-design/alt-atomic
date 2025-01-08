@@ -24,9 +24,6 @@ gnome-shell-extension-appindicator \
 gnome-shell-extension-blur-my-shell \
 gnome-shell-extension-dash-to-dock
 
-# Установка Flatpak приложений
-/src/packages/DE/GNOME/fpatpak.sh
-
 # Настройка
 /src/packages/DE/GNOME/settings.sh
 

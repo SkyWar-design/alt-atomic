@@ -35,6 +35,7 @@ ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-f
 
 # копируем службы
 cp /src/configuration/user_exec/systemd/system/* /usr/lib/systemd/system/
+cp /src/configuration/user_exec/systemd/user/* /usr/lib/systemd/user/
 
 # копируем скрипты
 cp /src/configuration/user_exec/libexec/* /usr/libexec/
@@ -46,6 +47,7 @@ systemctl enable atomic-groups.service
 systemctl enable brew-setup.service
 systemctl enable brew-upgrade.timer
 systemctl enable brew-update.timer
+systemctl --global enable flatpak-install.service
 
 # Расширение лимитов на число открытых файлов для всех юзеров. (при обновлении системы открывается большое число файлов/слоев)
 grep -qE "^\* hard nofile 978160$" /etc/security/limits.conf || echo "* hard nofile 978160" >> /etc/security/limits.conf

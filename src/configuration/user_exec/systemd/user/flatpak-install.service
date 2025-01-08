@@ -1,0 +1,11 @@
+[Unit]
+Description=Install user-level Flatpak apps on first login
+After=default.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/flatpak-user-install.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
