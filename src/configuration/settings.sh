@@ -51,6 +51,9 @@ systemctl enable brew-update.timer
 grep -qE "^\* hard nofile 978160$" /etc/security/limits.conf || echo "* hard nofile 978160" >> /etc/security/limits.conf
 grep -qE "^\* soft nofile 978160$" /etc/security/limits.conf || echo "* soft nofile 978160" >> /etc/security/limits.conf
 
+# Синхронизируем конфиги
+rsync -av --progress /src/source/etc/ /etc/
+
 # Локаль
 echo 'LANG=ru_RU.UTF-8' | tee /etc/locale.conf /etc/sysconfig/i18n
 

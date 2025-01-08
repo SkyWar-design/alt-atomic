@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+
 echo "Installing Brew"
 
 set -xeou pipefail
