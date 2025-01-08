@@ -61,6 +61,10 @@ grep -qE "^\* soft nofile 978160$" /etc/security/limits.conf || echo "* soft nof
 # Синхронизируем конфиги
 rsync -av --progress /src/source/etc/ /etc/
 
+# Меняем доступ к файлам
+chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap
+chmod a+x /usr/bin/newuidmap /usr/bin/newgidmap
+
 # Локаль
 echo 'LANG=ru_RU.UTF-8' | tee /etc/locale.conf /etc/sysconfig/i18n
 
