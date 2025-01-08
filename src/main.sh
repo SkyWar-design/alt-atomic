@@ -8,7 +8,7 @@ echo "Running main.sh..."
 # Базовые пакеты для работы системы
 ./packages/apt_prepare.sh
 ./packages/base.sh
-./packages/DE/GNOME/init.sh
+./packages/DE/GNOME/main.sh
 ./packages/apt_ending.sh
 
 # Настройка
