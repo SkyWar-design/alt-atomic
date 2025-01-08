@@ -21,6 +21,6 @@ rm /usr/lib/systemd/system/display-manager.service
 ln -s /usr/lib/systemd/system/gdm.service /usr/lib/systemd/system/display-manager.service
 
 # Установка Flatpak приложений
-/src/packages/DE/GNOME/fpatpak.sh
+#/src/packages/DE/GNOME/fpatpak.sh
 
 echo "End installing GNOME packages"
