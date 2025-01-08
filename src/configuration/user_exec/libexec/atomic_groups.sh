@@ -20,8 +20,8 @@ fi
 append_group() {
   local group_name="$1"
   if ! grep -q "^$group_name:" /etc/group; then
-    echo "Appending $group_name to /etc/group"
-    grep "^$group_name:" /usr/lib/group | tee -a /etc/group > /dev/null
+    echo "Creating group $group_name"
+    groupadd "$group_name"
   fi
 }
 
@@ -29,12 +29,18 @@ append_group docker
 append_group lxd
 append_group libvirt
 
-# Получаем всех пользователей из группы "users" (GID 100)
-userarray=($(getent group 100 | cut -d ":" -f 4 | tr ',' '\n'))
+# Получаем всех пользователей с UID >= 1000
+userarray=($(awk -F: '$3 >= 1000 {print $1}' /etc/passwd))
 
-# Добавляем всех пользователей из группы "users" в необходимые группы
-for user in "${userarray[@]}"
-do
+# Проверяем, есть ли пользователи
+if [[ ${#userarray[@]} -eq 0 ]]; then
+  echo "No users with UID >= 1000 found."
+  exit 0
+fi
+
+# Добавляем пользователей в необходимые группы
+for user in "${userarray[@]}"; do
+  echo "Adding user $user to groups"
   usermod -aG docker $user
   usermod -aG lxd $user
   usermod -aG libvirt $user
