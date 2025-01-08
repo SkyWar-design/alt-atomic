@@ -3,22 +3,10 @@
 echo "Installing GNOME packages"
 
 apt-get install -y gnome3-minimal \
-firefox \
 gnome-software-disable-updates \
 gnome-tweaks \
 fonts-ttf-liberation \
-fonts-ttf-dejavu \
-qt5-wayland \
-qt6-wayland \
-wayland-utils \
-vulkan-tools \
-xorg-drv-qxl \
-xorg-drv-spiceqxl \
-xorg-drv-intel \
-xorg-drv-amdgpu \
-xorg-drv-vmware \
-xorg-drv-nouveau \
-xorg-drv-radeon
+fonts-ttf-dejavu
 
 # Обновление шрифтов
 fc-cache -fv
