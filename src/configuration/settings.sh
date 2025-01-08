@@ -7,7 +7,7 @@ echo "Running settings.sh"
 #ln -s var/mnt /mnt
 #ln -s var/opt /opt
 #ln -s run/media /media
-mkdir -p /var/root /var/home /var/mnt /var/opt
+mkdir -p /var/root /var/home /var/mnt /var/opt /etc/sudoers.d
 rm -rf /mnt && ln -s var/mnt /mnt
 rm -rf /opt && ln -s var/opt /opt
 rm -rf /media && ln -s run/media /media
@@ -34,7 +34,7 @@ echo "readonly = true" >> /usr/lib/ostree/prepare-root.conf
 # Отключаем SELINUX
 echo "SELINUX=disabled" > /etc/selinux/config
 
-# Создаём файл /etc/sudoers.d/allow-wheel-nopass
+# Создаём файл /etc/sudoers.d/allow-wheel-nopass если его нет
 touch /etc/sudoers.d/allow-wheel-nopass
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
