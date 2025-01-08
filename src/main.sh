@@ -21,6 +21,5 @@ echo "Running main.sh..."
 ./make/bootupd.sh
 ./make/bootc.sh
 ./make/brew.sh
-./configuration/ostree.sh
 
 echo "All scripts executed successfully."
