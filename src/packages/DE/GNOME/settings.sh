@@ -2,6 +2,10 @@
 
 echo "Installing GNOME packages"
 
+# Шрифты
+cp -r /src/source/font/JetBrainsMono /usr/share/fonts/
+cp -r /src/source/font/SanFranciscoProDisplay /usr/share/fonts/
+
 # Обновление шрифтов
 fc-cache -fv
 
