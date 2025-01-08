@@ -36,4 +36,6 @@ gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'org.gnome.Text
 # Включаем расширения
 gsettings set org.gnome.shell enabled-extensions "['appindicatorsupport@rgcjonas.gmail.com', 'dash-to-dock@micxgx.gmail.com', 'blur-my-shell@aunetx']"
 
+cp /src/source/gnome-initial-setup-first-login.desktop /etc/xdg/autostart/gnome-initial-setup-first-login.desktop
+
 echo "End installing GNOME packages"

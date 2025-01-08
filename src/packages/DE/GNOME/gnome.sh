@@ -4,6 +4,7 @@ echo "Installing GNOME packages"
 
 apt-get install -y gnome3-minimal \
 firefox \
+gnome-initial-setup \
 gnome-software-disable-updates \
 gnome-tweaks \
 fonts-ttf-liberation \

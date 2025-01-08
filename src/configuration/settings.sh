@@ -34,7 +34,7 @@ mkdir -p /etc/systemd/system/local-fs.target.wants/
 ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service
 
 # копируем службы
-cp /src/configuration/user_exec/systemd/* /usr/lib/systemd/system/
+cp /src/configuration/user_exec/systemd/system/* /usr/lib/systemd/system/
 
 # копируем скрипты
 cp /src/configuration/user_exec/libexec/* /usr/libexec/
