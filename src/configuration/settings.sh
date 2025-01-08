@@ -29,6 +29,11 @@ echo "SELINUX=disabled" > /etc/selinux/config
 touch /etc/sudoers.d/allow-wheel-nopass
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
+# Настройка vconsole
+touch /etc/vconsole.conf
+echo "KEYMAP=ru" > /etc/vconsole.conf
+echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
+
 # Включаем сервис ostree-remount
 mkdir -p /etc/systemd/system/local-fs.target.wants/
 ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service

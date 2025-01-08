@@ -14,7 +14,7 @@ echo "Running main.sh..."
 # Настройка
 ./configuration/branding.sh
 ./configuration/settings.sh
-#./configuration/user.sh
+./configuration/user.sh
 ./configuration/kernel.sh
 ./make/zstd.sh
 ./make/cargo.sh

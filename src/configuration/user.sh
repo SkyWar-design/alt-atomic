@@ -5,6 +5,6 @@ useradd -m -G wheel -s /bin/bash atomic && \
 echo "atomic:atomic" | chpasswd && \
 mkdir -p /var/home/atomic && chown atomic:atomic /var/home/atomic
 
-usermod -aG fuse atomic
-usermod -aG render atomic
-usermod -aG docker atomic
+#usermod -aG fuse atomic
+#usermod -aG render atomic
+#usermod -aG docker atomic
