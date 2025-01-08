@@ -3,9 +3,18 @@
 echo "Installing base packages"
 
 apt-get install -y \
-    mount \
-    bluez \
+    zsh \
+    htop \
+    nvtop \
+    distrobox \
+    docker-engine \
+    fastfetch \
     podman \
+    mount \
+    libvirt \
+    lxd \
+    eza \
+    bluez \
     btrfs-progs \
     kbd \
     mc \

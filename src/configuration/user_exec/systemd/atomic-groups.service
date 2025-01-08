@@ -1,0 +1,13 @@
+[Unit]
+Description=Add wheel members to main groups
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/atomic_groups.sh
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=0
+
+[Install]
+WantedBy=default.target

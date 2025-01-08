@@ -14,11 +14,13 @@ echo "Running main.sh..."
 # Настройка
 ./configuration/branding.sh
 ./configuration/settings.sh
+#./configuration/user.sh
 ./configuration/kernel.sh
 ./make/zstd.sh
 ./make/cargo.sh
 ./make/bootupd.sh
 ./make/bootc.sh
+./make/brew.sh
 ./configuration/ostree.sh
 
 echo "All scripts executed successfully."

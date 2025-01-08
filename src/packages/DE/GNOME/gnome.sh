@@ -18,21 +18,15 @@ xorg-drv-intel \
 xorg-drv-amdgpu \
 xorg-drv-vmware \
 xorg-drv-nouveau \
-xorg-drv-radeon
-
-# Обновление шрифтов
-fc-cache -fv
-
-# Неожиданно Alt linux в /var/lib/openvpn/dev записывает устройство urandom
-# устройства запрещено включать в коммит, только файлы и сим-линки
-rm -f /var/lib/openvpn/dev/urandom
-ln -s /dev/urandom /var/lib/openvpn/dev/urandom
-
-# Меняем Display manager
-rm /usr/lib/systemd/system/display-manager.service
-ln -s /usr/lib/systemd/system/gdm.service /usr/lib/systemd/system/display-manager.service
+ptyxis \
+gnome-shell-extension-appindicator \
+gnome-shell-extension-blur-my-shell \
+gnome-shell-extension-dash-to-dock
 
 # Установка Flatpak приложений
 /src/packages/DE/GNOME/fpatpak.sh
+
+# Настройка
+/src/packages/DE/GNOME/settings.sh
 
 echo "End installing GNOME packages"

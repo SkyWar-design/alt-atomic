@@ -11,5 +11,8 @@ flatpak update -y
 
 flatpak install -y flathub com.mattjakeman.ExtensionManager
 flatpak install -y flathub com.github.tchx84.Flatseal
+flatpak install -y flathub org.gnome.World.PikaBackup
+flatpak install -y flathub org.gnome.NautilusPreviewer
+flatpak install -y flathub org.telegram.desktop
 
 echo "End installing Flatpak"
