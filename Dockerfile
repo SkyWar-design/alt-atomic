@@ -8,7 +8,7 @@ ENV PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/lib/pkgconfig"
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 WORKDIR /src
-# Делаем один RUN запуск потому что увеличние их числа - добавляет ненужные слои и увеличивает обьем образа
+# Делаем один RUN запуск, потому что увеличние их числа добавляет ненужные слои и увеличивает обьем образа
 RUN chmod +x main.sh && ./main.sh
 
 # Помечаем образ как bootc совместимый
