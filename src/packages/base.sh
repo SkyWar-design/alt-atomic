@@ -7,6 +7,7 @@ apt-get install -y \
     htop \
     nvtop \
     distrobox \
+    flatpak \
     docker-engine \
     fastfetch \
     podman \
