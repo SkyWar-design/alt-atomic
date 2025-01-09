@@ -1,3 +1,9 @@
+if [ -n "$DISTROBOX_ENTER_PATH" ]; then
+    echo "Switching to bash inside Distrobox..."
+    exec /bin/bash
+    exit 0
+fi
+
 # Установить алиасы
 alias ll='ls -la'
 alias ..='cd ..'
