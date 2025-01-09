@@ -15,4 +15,4 @@ sources=[('xkb', 'us'), ('xkb', 'ru')]
 [org/gnome/desktop/interface]
 font-name='SF Pro Display 12'
 document-font-name='SF Pro Display 12'
-monospace-font-name='JetBrains Mono 18'
+monospace-font-name='JetBrains Mono 16'

@@ -18,6 +18,9 @@ fi
 
 echo "Installing user-level Flatpaks..."
 
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak update -y
+
 flatpak install --user -y flathub com.mattjakeman.ExtensionManager
 flatpak install --user -y flathub com.github.tchx84.Flatseal
 flatpak install --user -y flathub org.gnome.World.PikaBackup
