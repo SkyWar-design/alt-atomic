@@ -65,6 +65,9 @@ rsync -av --progress /src/source/etc/ /etc/
 chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap
 chmod a+x /usr/bin/newuidmap /usr/bin/newgidmap
 
+# Репозиторий flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
 # Локаль
 echo 'LANG=ru_RU.UTF-8' | tee /etc/locale.conf /etc/sysconfig/i18n
 
