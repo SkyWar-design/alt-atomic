@@ -43,6 +43,7 @@ for user in "${userarray[@]}"; do
   echo "Adding user $user to groups"
   usermod -aG docker $user
   usermod -aG lxd $user
+  usermod -aG fuse $user
   usermod -aG libvirt $user
 done
 

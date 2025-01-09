@@ -3,8 +3,10 @@ set -e
 
 echo "Running branding.sh"
 
+echo "Atomic" > /etc/hostname
 echo "ID=alt" > /etc/os-release
-echo "NAME=\"ALT Atomic\"" >> /etc/os-release
-echo "VERSION=\"6.12 Atomic Build\"" >> /etc/os-release
+echo "NAME=\"ALT Atomic Test\"" >> /etc/os-release
+echo "VERSION=\"0.1\"" >> /etc/os-release
+echo "VERSION_ID=\"0.1\"" >> /etc/os-release
 
-echo "ENd branding.sh"
+echo "End branding.sh"
