@@ -3,6 +3,7 @@ set -e
 
 echo "Running branding.sh"
 
+echo "Atomic" > /etc/hostname
 cat << EOF > /etc/os-release
 NAME="ALT Atomic"
 VERSION="0.1"

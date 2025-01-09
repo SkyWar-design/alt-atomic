@@ -21,11 +21,8 @@ echo "Installing user-level Flatpaks..."
 
 fakeroot flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-# Если мы в GNOME
-if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]] || [[ "$DESKTOP_SESSION" == *"gnome"* ]]; then
-    flatpak install --user -y flathub com.mattjakeman.ExtensionManager && notify-send "Flatpak Installation" "Installed Extension Manager"
-    flatpak install --user -y flathub org.gnome.NautilusPreviewer && notify-send "Flatpak Installation" "Installed NautilusPreviewer"
-fi
+flatpak install --user -y flathub com.mattjakeman.ExtensionManager && notify-send "Flatpak Installation" "Installed Extension Manager"
+flatpak install --user -y flathub org.gnome.NautilusPreviewer && notify-send "Flatpak Installation" "Installed NautilusPreviewer"
 
 flatpak install --user -y flathub io.github.dvlv.boxbuddyrs && notify-send "Flatpak Installation" "Installed Boxbuddy"
 flatpak install --user -y flathub com.github.tchx84.Flatseal && notify-send "Flatpak Installation" "Installed Flatseal"
