@@ -9,6 +9,7 @@ apt-get install -y \
     distrobox \
     flatpak \
     docker-engine \
+    tzdata \
     fastfetch \
     podman \
     mount \
