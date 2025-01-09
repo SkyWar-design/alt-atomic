@@ -6,7 +6,7 @@ apt-get install -y \
     zsh \
     starship \
     htop \
-    libnotify \
+    notify-send \
     nvtop \
     distrobox \
     flatpak \
