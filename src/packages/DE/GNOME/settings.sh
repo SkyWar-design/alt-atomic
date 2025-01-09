@@ -2,13 +2,6 @@
 
 echo "Installing GNOME packages"
 
-# Шрифты
-cp -r /src/source/font/JetBrainsMono /usr/share/fonts/
-cp -r /src/source/font/SanFranciscoProDisplay /usr/share/fonts/
-
-# Обновление шрифтов
-fc-cache -fv
-
 # Неожиданно Alt linux в /var/lib/openvpn/dev записывает устройство urandom
 # устройства запрещено включать в коммит, только файлы и сим-линки
 rm -f /var/lib/openvpn/dev/urandom
@@ -30,7 +23,7 @@ sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applica
 systemctl enable gdm
 
 # Синхронизируем конфиги
-rsync -av --progress /src/source/GNOME/etc/ /etc/
+rsync -av --progress /src/source/configuration/DE/GNOME/etc/ /etc/
 
 # Обновление dconf
 dconf update

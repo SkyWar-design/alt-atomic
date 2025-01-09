@@ -4,7 +4,9 @@ echo "Installing base packages"
 
 apt-get install -y \
     zsh \
+    starship \
     htop \
+    libnotify \
     nvtop \
     distrobox \
     flatpak \

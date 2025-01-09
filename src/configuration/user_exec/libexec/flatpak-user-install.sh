@@ -16,15 +16,23 @@ if [ "$GROUP_SETUP_VER" = "$GROUP_SETUP_VER_RAN" ]; then
     exit 0
 fi
 
+notify-send "Flatpak Installation" "Запущена установка Flatpak приложений, пожалуйста не отключайте устройство"
 echo "Installing user-level Flatpaks..."
 
-flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install --user -y flathub com.mattjakeman.ExtensionManager
-flatpak install --user -y flathub com.github.tchx84.Flatseal
-flatpak install --user -y flathub org.gnome.World.PikaBackup
-flatpak install --user -y flathub org.gnome.NautilusPreviewer
-flatpak install --user -y flathub org.telegram.desktop
+fakeroot flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
+# Если мы в GNOME
+if [[ "$XDG_CURRENT_DESKTOP" == *"GNOME"* ]] || [[ "$DESKTOP_SESSION" == *"gnome"* ]]; then
+    flatpak install --user -y flathub com.mattjakeman.ExtensionManager && notify-send "Flatpak Installation" "Installed Extension Manager"
+    flatpak install --user -y flathub org.gnome.NautilusPreviewer && notify-send "Flatpak Installation" "Installed NautilusPreviewer"
+fi
+
+flatpak install --user -y flathub io.github.dvlv.boxbuddyrs && notify-send "Flatpak Installation" "Installed Boxbuddy"
+flatpak install --user -y flathub com.github.tchx84.Flatseal && notify-send "Flatpak Installation" "Installed Flatseal"
+flatpak install --user -y flathub org.gnome.World.PikaBackup && notify-send "Flatpak Installation" "Installed PikaBackup"
+flatpak install --user -y flathub org.telegram.desktop && notify-send "Flatpak Installation" "Installed telegram"
+
+notify-send "Flatpak Installation" "Установка завершена"
 echo "Done installing user-level Flatpaks"
 
 # Запоминаем выполнение вместе с версией скрипта

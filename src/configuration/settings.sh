@@ -58,8 +58,14 @@ systemctl --global enable flatpak-install.service
 grep -qE "^\* hard nofile 978160$" /etc/security/limits.conf || echo "* hard nofile 978160" >> /etc/security/limits.conf
 grep -qE "^\* soft nofile 978160$" /etc/security/limits.conf || echo "* soft nofile 978160" >> /etc/security/limits.conf
 
-# Синхронизируем конфиги
-rsync -av --progress /src/source/etc/ /etc/
+# Синхронизируем etc
+rsync -av --progress /src/source/configuration/etc/ /etc/
+
+# Синхронизируем usr
+rsync -av --progress /src/source/configuration/usr/ /usr/
+
+# Обновление шрифтов
+fc-cache -fv
 
 # Меняем доступ к файлам
 chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap
@@ -67,6 +73,9 @@ chmod a+x /usr/bin/newuidmap /usr/bin/newgidmap
 
 # Репозиторий flatpak
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+# Заберем полный zoneinfo так как пакет tzdata его не предоставляет
+curl -o /usr/share/zoneinfo/zone.tab https://raw.githubusercontent.com/eggert/tz/main/zone.tab
 
 # Локаль
 echo 'LANG=ru_RU.UTF-8' | tee /etc/locale.conf /etc/sysconfig/i18n
