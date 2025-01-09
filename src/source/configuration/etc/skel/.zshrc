@@ -3,7 +3,8 @@ alias ll='ls -la'
 alias ..='cd ..'
 alias neofetch=fastfetch
 
-eval "$(starship init bash)"
+export STARSHIP_CONFIG=/etc/starship/starship.toml
+eval "$(starship init zsh)"
 
 # Настройка кэша автодополнений
 zcompdump_file="${ZDOTDIR:-$HOME}/.zcompdump"
