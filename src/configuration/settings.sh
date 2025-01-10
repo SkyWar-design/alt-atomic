@@ -38,9 +38,6 @@ echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
 mkdir -p /etc/systemd/system/local-fs.target.wants/
 ln -s /usr/lib/systemd/system/ostree-remount.service /etc/systemd/system/local-fs.target.wants/ostree-remount.service
 
-# копируем efi загрузочные модули
-cp -r /src/source/x86_64-efi /boot/grub/
-
 # копируем службы
 cp /src/configuration/user_exec/systemd/system/* /usr/lib/systemd/system/
 cp /src/configuration/user_exec/systemd/user/* /usr/lib/systemd/user/
