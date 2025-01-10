@@ -26,12 +26,6 @@ echo "Applying ALT Linux specific patches..."
 sed -i 's/\bgrub2\b/grub/g' src/grubconfigs.rs
 sed -i 's|let cruft = \["loader", "grub2"\];|let cruft = \["loader", "grub"\];|' src/efi.rs
 sed -i 's|usr/sbin/grub2-install|usr/sbin/grub-install|' src/bios.rs
-sed -i '/let boot_dir = Path::new(dest_root).join("boot");/a \
-        #[cfg(target_arch = "x86_64")]\
-        cmd.args(["--target", "x86_64-efi"])\
-            .args(["--boot-directory", boot_dir.to_str().unwrap()])\
-            .args(["--modules", "mdraid1x part_gpt"])\
-            .arg(device);' src/bios.rs
 sed -i '/if !rpmout.status.success()/a \        return Ok(ContentMetadata { timestamp: chrono::Utc::now(), version: "unknown".to_string() });' \
     src/packagesystem.rs
 sed -i '/std::io::stderr().write_all(&rpmout.stderr)/d' src/packagesystem.rs
