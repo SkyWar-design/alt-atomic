@@ -33,9 +33,8 @@ touch /etc/sudoers.d/allow-wheel-nopass
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
 # Настройка vconsole
-#touch /etc/vconsole.conf
-#echo "KEYMAP=ru" > /etc/vconsole.conf
-#echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
+touch /etc/vconsole.conf
+echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
 
 # Включаем сервис ostree-remount
 mkdir -p /etc/systemd/system/local-fs.target.wants/
@@ -64,6 +63,9 @@ grep -qE "^\* soft nofile 978160$" /etc/security/limits.conf || echo "* soft nof
 # Синхронизируем etc
 rsync -av --progress /src/source/configuration/etc/ /etc/
 
+# Синхронизируем lib
+rsync -av --progress /src/source/configuration/etc/ /lib/
+
 # Синхронизируем usr
 rsync -av --progress /src/source/configuration/usr/ /usr/
 
@@ -82,5 +84,6 @@ curl -o /usr/share/zoneinfo/zone.tab https://raw.githubusercontent.com/eggert/tz
 
 # Локаль
 echo 'LANG=ru_RU.UTF-8' | tee /etc/locale.conf /etc/sysconfig/i18n
+
 
 echo "End settings.sh"
