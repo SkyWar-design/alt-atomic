@@ -16,7 +16,7 @@ if [ "$GROUP_SETUP_VER" = "$GROUP_SETUP_VER_RAN" ]; then
     exit 0
 fi
 
-notify-send "Flatpak Installation" "Запущена установка Flatpak приложений, пожалуйста не отключайте устройство"
+notify-send "Flatpak Installation" "Запущена установка Flatpak приложений"
 echo "Installing user-level Flatpaks..."
 
 fakeroot flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
