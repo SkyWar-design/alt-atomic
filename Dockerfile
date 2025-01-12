@@ -9,7 +9,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 WORKDIR /src
 # Делаем один RUN запуск, потому что увеличние их числа добавляет ненужные слои и увеличивает обьем образа
-RUN chmod +x main.sh && ./main.sh && rm -rf /src
+RUN chmod +x main.sh && ./main.sh
 
 WORKDIR /
 # Помечаем образ как bootc совместимый
