@@ -6,6 +6,7 @@ echo "Running settings.sh"
 mkdir -p /var/root /var/home /var/mnt /var/opt /etc/atomic
 rm -rf /mnt && ln -s var/mnt /mnt
 rm -rf /opt && ln -s var/opt /opt
+rm -rf /srv && ln -s var/srv /srv
 rm -rf /media && ln -s run/media /media
 
 rm -rf /root && ln -s var/root /root
@@ -19,6 +20,8 @@ cp -a ./source/bootupd/ /usr/lib/
 mkdir -p /usr/local/bin
 mkdir -p /usr/lib/ostree
 
+echo "[composefs]" > /usr/lib/ostree/prepare-root.conf
+echo "enabled = no" >> /usr/lib/ostree/prepare-root.conf
 echo "[sysroot]" > /usr/lib/ostree/prepare-root.conf
 echo "readonly = true" >> /usr/lib/ostree/prepare-root.conf
 
@@ -30,9 +33,9 @@ touch /etc/sudoers.d/allow-wheel-nopass
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
 # Настройка vconsole
-touch /etc/vconsole.conf
-echo "KEYMAP=ru" > /etc/vconsole.conf
-echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
+#touch /etc/vconsole.conf
+#echo "KEYMAP=ru" > /etc/vconsole.conf
+#echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
 
 # Включаем сервис ostree-remount
 mkdir -p /etc/systemd/system/local-fs.target.wants/
