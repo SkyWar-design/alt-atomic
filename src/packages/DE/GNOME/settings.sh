@@ -32,4 +32,15 @@ dconf update
 # Включение первоначальной настройки InitialSetupEnable
 sed -i '/^\[daemon\]/a InitialSetupEnable=True' /etc/gdm/custom.conf
 
+# Убираем строки связанные с проверкой user = gdm, иначе gnome-initial-setup НЕ РАБОТАЕТ
+FILE="/etc/pam.d/gdm-launch-environment"
+# Проверяем, существует ли файл
+if [[ -f "$FILE" ]]; then
+    echo "Комментируем строки с 'user = gdm' в $FILE"
+    sed -i '/user = gdm/s/^/# /' "$FILE"
+    echo "Изменения успешно внесены."
+else
+    echo "Ошибка: файл $FILE не найден."
+fi
+
 echo "End installing GNOME packages"
