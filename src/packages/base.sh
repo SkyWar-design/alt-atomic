@@ -4,6 +4,7 @@ echo "Installing base packages"
 
 apt-get install -y \
     zsh \
+    virt-manager \
     starship \
     htop \
     notify-send \
