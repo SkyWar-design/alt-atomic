@@ -64,7 +64,7 @@ grep -qE "^\* soft nofile 978160$" /etc/security/limits.conf || echo "* soft nof
 rsync -av --progress /src/source/configuration/etc/ /etc/
 
 # Синхронизируем lib
-rsync -av --progress /src/source/configuration/etc/ /lib/
+rsync -av --progress /src/source/configuration/lib/ /lib/
 
 # Синхронизируем usr
 rsync -av --progress /src/source/configuration/usr/ /usr/
