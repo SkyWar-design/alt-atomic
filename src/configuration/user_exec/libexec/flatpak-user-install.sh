@@ -4,6 +4,11 @@
 GROUP_SETUP_VER=1
 GROUP_SETUP_VER_FILE="$HOME/.local/share/flatpak-user-install"
 
+if [ "$UID" -lt 1000 ]; then
+    echo "Not a valid user."
+    exit 0
+fi
+
 # Проверяем выполнение
 if [ -f "$GROUP_SETUP_VER_FILE" ]; then
     GROUP_SETUP_VER_RAN="$(cat "$GROUP_SETUP_VER_FILE")"
