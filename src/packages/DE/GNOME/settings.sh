@@ -38,4 +38,7 @@ if [[ -f "$FILE" ]]; then
     sed -i '/user = gdm/s/^/# /' "$FILE"
 fi
 
+# Включаем создание домашних папок
+sed -i 's/^[[:space:]]*enabled=false/enabled=True/i' /etc/xdg/user-dirs.conf
+
 echo "End installing GNOME packages"
