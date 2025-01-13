@@ -28,10 +28,11 @@ fakeroot flatpak remote-add --user --if-not-exists flathub https://dl.flathub.or
 
 flatpak install --user -y flathub com.mattjakeman.ExtensionManager && notify-send "Flatpak Installation" "Installed Extension Manager"
 flatpak install --user -y flathub org.gnome.NautilusPreviewer && notify-send "Flatpak Installation" "Installed NautilusPreviewer"
+flatpak install --user -y flathub org.gnome.baobab && notify-send "Flatpak Installation" "Installed baobab"
+flatpak install --user -y flathub org.gnome.World.PikaBackup && notify-send "Flatpak Installation" "Installed PikaBackup"
 
 flatpak install --user -y flathub io.github.dvlv.boxbuddyrs && notify-send "Flatpak Installation" "Installed Boxbuddy"
 flatpak install --user -y flathub com.github.tchx84.Flatseal && notify-send "Flatpak Installation" "Installed Flatseal"
-flatpak install --user -y flathub org.gnome.World.PikaBackup && notify-send "Flatpak Installation" "Installed PikaBackup"
 flatpak install --user -y flathub org.telegram.desktop && notify-send "Flatpak Installation" "Installed telegram"
 
 notify-send "Flatpak Installation" "Установка завершена"
