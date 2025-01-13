@@ -34,8 +34,8 @@ echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
 # Настройка vconsole
 touch /etc/vconsole.conf
-echo "KEYMAP=ru" > /etc/vconsole.conf
-echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
+echo "KEYMAP=ruwin-Corwin_alt_sh-UTF-8" > /etc/vconsole.conf
+echo "FONT=UniCyr_8x16" > /etc/vconsole.conf
 
 # Включаем сервис ostree-remount
 mkdir -p /etc/systemd/system/local-fs.target.wants/
