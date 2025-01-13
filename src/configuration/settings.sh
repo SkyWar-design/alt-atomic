@@ -34,6 +34,7 @@ echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/allow-wheel-nopass
 
 # Настройка vconsole
 touch /etc/vconsole.conf
+echo "KEYMAP=ru" > /etc/vconsole.conf
 echo "FONT=latarcyrheb-sun16" > /etc/vconsole.conf
 
 # Включаем сервис ostree-remount

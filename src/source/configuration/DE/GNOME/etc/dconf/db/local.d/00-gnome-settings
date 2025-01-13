@@ -31,3 +31,6 @@ profile-uuids=['f91d440d07cd15857f91abf0677f7d3c']
 custom-command='/bin/zsh'
 login-shell=false
 use-custom-command=true
+
+[org/gnome/mutter]
+center-new-windows=true
