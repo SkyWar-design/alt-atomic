@@ -22,6 +22,7 @@ apt-get install -y \
     bluez \
     btrfs-progs \
     kbd \
+    kbd-data \
     man \
     mc \
     nano \
