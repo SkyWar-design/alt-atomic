@@ -7,6 +7,7 @@ firefox \
 gnome-initial-setup \
 gnome-software-disable-updates \
 gnome-tweaks \
+gnome-keyring-ssh \
 fonts-ttf-liberation \
 fonts-ttf-dejavu \
 qt5-wayland \
