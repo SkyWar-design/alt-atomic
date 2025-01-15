@@ -26,7 +26,8 @@ rsync -av --progress /src/source/configuration/DE/GNOME/etc/ /etc/
 dconf update
 
 # Включаем pam_gnome_keyring для gnome-initial-setup
-sed -i "/pam_gdm.so/a -auth optional pam_gnome_keyring.so" /etc/pam.d/gdm-autologin
+echo "auth optional pam_gnome_keyring.so" >> /etc/pam.d/gdm-launch-environment
+echo "session optional pam_gnome_keyring.so auto_start" >> /etc/pam.d/gdm-launch-environment
 
 # Включение первоначальной настройки InitialSetupEnable
 sed -i '/^\[daemon\]/a InitialSetupEnable=True' /etc/gdm/custom.conf
