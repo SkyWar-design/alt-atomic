@@ -4,8 +4,8 @@ echo "Installing GNOME packages"
 
 # Неожиданно Alt linux в /var/lib/openvpn/dev записывает устройство urandom
 # устройства запрещено включать в коммит, только файлы и сим-линки
-rm -f /var/lib/openvpn/dev/urandom
-ln -s /dev/urandom /var/lib/openvpn/dev/urandom
+#rm -f /var/lib/openvpn/dev/urandom
+#ln -s /dev/urandom /var/lib/openvpn/dev/urandom
 
 # Меняем Display manager
 #rm /usr/lib/systemd/system/display-manager.service
