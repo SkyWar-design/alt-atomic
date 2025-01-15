@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-echo "Проверка ostree commit. Ожидайте"
+echo "Проверка ostree commit"
 
 # Проверка `ostree refs`
 if ostree --repo=/sysroot/ostree/repo refs | grep -q .; then
-  echo "OSTree refs exist. Skipping commit creation."
+  echo "Репозиторий найден."
 else
-  echo "No OSTree refs found. Creating initial commit."
+  echo "Не найден репозиторий. Создание коммита, пожалуйста ожидайте."
 
   ## Инициализация OSTree репозитория
   mkdir -p /sysroot/ostree/repo
