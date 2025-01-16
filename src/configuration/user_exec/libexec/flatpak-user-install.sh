@@ -16,6 +16,7 @@ else
     GROUP_SETUP_VER_RAN=""
 fi
 
+
 if [ "$GROUP_SETUP_VER" = "$GROUP_SETUP_VER_RAN" ]; then
     echo "Flatpak user install (version $GROUP_SETUP_VER) has already run. Exiting..."
     exit 0
