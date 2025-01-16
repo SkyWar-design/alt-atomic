@@ -1,0 +1,13 @@
+#%PAM-1.0
+auth		substack	system-auth
+auth		substack	system-policy
+auth		required	pam_nologin.so
+account		substack	system-auth
+account		substack	system-policy
+account		required	pam_nologin.so
+password	include		system-auth
+password	include		system-policy
+session		substack	system-auth
+session		required	pam_loginuid.so
+session	    optional	pam_systemd.so
+session		substack	system-policy
