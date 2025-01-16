@@ -26,17 +26,17 @@ rsync -av --progress /src/source/configuration/DE/GNOME/etc/ /etc/
 dconf update
 
 # Включаем pam_gnome_keyring для gnome-initial-setup
-echo "auth optional pam_gnome_keyring.so" >> /etc/pam.d/gdm-launch-environment
-echo "session optional pam_gnome_keyring.so auto_start" >> /etc/pam.d/gdm-launch-environment
+#echo "auth optional pam_gnome_keyring.so" >> /etc/pam.d/gdm-launch-environment
+#echo "session optional pam_gnome_keyring.so auto_start" >> /etc/pam.d/gdm-launch-environment
 
 # Включение первоначальной настройки InitialSetupEnable
 sed -i '/^\[daemon\]/a InitialSetupEnable=True' /etc/gdm/custom.conf
 
 # Убираем строки связанные с проверкой user = gdm, иначе gnome-initial-setup НЕ РАБОТАЕТ
-FILE="/etc/pam.d/gdm-launch-environment"
-if [[ -f "$FILE" ]]; then
-    sed -i '/user = gdm/s/^/# /' "$FILE"
-fi
+#FILE="/etc/pam.d/gdm-launch-environment"
+#if [[ -f "$FILE" ]]; then
+#    sed -i '/user = gdm/s/^/# /' "$FILE"
+#fi
 
 # Включаем создание домашних папок
 sed -i 's/^[[:space:]]*enabled=false/enabled=True/i' /etc/xdg/user-dirs.conf
