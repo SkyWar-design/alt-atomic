@@ -6,6 +6,7 @@ apt-get install -y \
     zsh \
     virt-manager \
     qemu-guest-agent \
+    spice-vdagent \
     starship \
     htop \
     notify-send \
