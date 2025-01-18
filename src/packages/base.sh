@@ -5,6 +5,7 @@ echo "Installing base packages"
 apt-get install -y \
     zsh \
     virt-manager \
+    qemu-guest-agent \
     starship \
     htop \
     notify-send \
