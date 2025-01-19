@@ -3,7 +3,7 @@ set -e
 
 echo "Running settings.sh"
 
-mkdir -p /var/root /var/home /var/mnt /var/opt /etc/atomic
+mkdir -p /var/root /var/home /var/mnt /var/opt /var/srv /etc/atomic
 rm -rf /mnt && ln -s var/mnt /mnt
 rm -rf /opt && ln -s var/opt /opt
 rm -rf /srv && ln -s var/srv /srv
