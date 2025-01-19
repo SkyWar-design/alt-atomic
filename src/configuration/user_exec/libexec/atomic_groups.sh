@@ -25,9 +25,9 @@ append_group() {
   fi
 }
 
-append_group docker
-append_group lxd
-append_group libvirt
+#append_group docker
+#append_group lxd
+#append_group libvirt
 
 # Получаем всех пользователей с UID >= 1000
 userarray=($(awk -F: '$3 >= 1000 {print $1}' /etc/passwd))
