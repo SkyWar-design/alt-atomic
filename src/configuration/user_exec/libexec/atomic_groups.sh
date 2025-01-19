@@ -17,49 +17,36 @@ if [[ -f $GROUP_SETUP_VER_FILE && "$GROUP_SETUP_VER" = "$GROUP_SETUP_VER_RAN" ]]
   exit 0
 fi
 
-append_group() {
-  local group_name="$1"
-  if ! grep -q "^$group_name:" /etc/group; then
-    echo "Creating group $group_name"
-    groupadd "$group_name"
-  fi
-}
+#append_group() {
+#  local group_name="$1"
+#  if ! grep -q "^$group_name:" /etc/group; then
+#    echo "Creating group $group_name"
+#    groupadd "$group_name"
+#  fi
+#}
 
 #append_group docker
 #append_group lxd
 #append_group libvirt
 
-# Получаем всех пользователей с UID >= 1000
-userarray=($(awk -F: '$3 >= 1000 {print $1}' /etc/passwd))
+# Массив групп, в которые нужно добавить пользователей
+groups=(docker lxd cuse _xfsscrub fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera usershares)
+
+# Получаем всех пользователей с UID >= 1000, исключая nobody
+userarray=($(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd))
 
 # Проверяем, есть ли пользователи
 if [[ ${#userarray[@]} -eq 0 ]]; then
-  echo "No users with UID >= 1000 found."
-  exit 0
+    echo "No users with UID >= 1000 found."
+    exit 0
 fi
 
-# Добавляем пользователей в необходимые группы
+# Добавляем пользователей в указанные группы
 for user in "${userarray[@]}"; do
-  echo "Adding user $user to groups"
-  usermod -aG docker $user
-  usermod -aG lxd $user
-  usermod -aG cuse $user
-  usermod -aG _xfsscrub $user
-  usermod -aG fuse $user
-  usermod -aG libvirt $user
-  usermod -aG adm $user
-  usermod -aG wheel $user
-  usermod -aG uucp $user
-  usermod -aG cdrom $user
-  usermod -aG cdwriter $user
-  usermod -aG audio $user
-  usermod -aG users $user
-  usermod -aG video $user
-  usermod -aG netadmin $user
-  usermod -aG scanner $user
-  usermod -aG xgrp $user
-  usermod -aG camera $user
-  usermod -aG usershares $user
+    echo "Adding user $user to groups..."
+    for group in "${groups[@]}"; do
+        usermod -aG "$group" "$user"
+    done
 done
 
 # Запоминаем выполнение вместе с версией скрипта
