@@ -30,7 +30,7 @@ dconf update
 #echo "session optional pam_gnome_keyring.so auto_start" >> /etc/pam.d/gdm-launch-environment
 
 # Включение первоначальной настройки InitialSetupEnable
-sed -i '/^\[daemon\]/a InitialSetupEnable=True' /etc/gdm/custom.conf
+#sed -i '/^\[daemon\]/a InitialSetupEnable=True' /etc/gdm/custom.conf
 
 # Убираем строки связанные с проверкой user = gdm, иначе gnome-initial-setup НЕ РАБОТАЕТ
 #FILE="/etc/pam.d/gdm-launch-environment"
