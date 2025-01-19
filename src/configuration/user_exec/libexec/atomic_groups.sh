@@ -47,6 +47,19 @@ for user in "${userarray[@]}"; do
   usermod -aG _xfsscrub $user
   usermod -aG fuse $user
   usermod -aG libvirt $user
+  usermod -aG adm $user
+  usermod -aG wheel $user
+  usermod -aG uucp $user
+  usermod -aG cdrom $user
+  usermod -aG cdwriter $user
+  usermod -aG audio $user
+  usermod -aG users $user
+  usermod -aG video $user
+  usermod -aG netadmin $user
+  usermod -aG scanner $user
+  usermod -aG xgrp $user
+  usermod -aG camera $user
+  usermod -aG usershares $user
 done
 
 # Запоминаем выполнение вместе с версией скрипта
