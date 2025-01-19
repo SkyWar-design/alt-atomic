@@ -4,11 +4,15 @@ if [ -n "$DISTROBOX_ENTER_PATH" ]; then
     exit 0
 fi
 
+# Подключаем zsh-autosuggestions
+source /usr/local/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 # Установить алиасы
 alias ll='ls -la'
 alias ..='cd ..'
 alias neofetch=fastfetch
 
+# Конфигурационный файл starship
 export STARSHIP_CONFIG=/etc/starship/starship.toml
 eval "$(starship init zsh)"
 
