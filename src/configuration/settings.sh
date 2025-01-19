@@ -58,6 +58,7 @@ systemctl enable brew-setup.service
 systemctl enable brew-upgrade.timer
 systemctl enable brew-update.timer
 systemctl --global enable flatpak-install.service
+systemctl --global enable pipewire{,-pulse}{,.socket} wireplumber
 
 # Расширение лимитов на число открытых файлов для всех юзеров. (при обновлении системы открывается большое число файлов/слоев)
 grep -qE "^\* hard nofile 978160$" /etc/security/limits.conf || echo "* hard nofile 978160" >> /etc/security/limits.conf
