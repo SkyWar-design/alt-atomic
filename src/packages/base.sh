@@ -4,6 +4,7 @@ echo "Installing base packages"
 
 apt-get install -y \
     zsh \
+    jq \
     virt-manager \
     fprintd \
     qemu-guest-agent \
