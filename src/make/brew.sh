@@ -17,5 +17,6 @@ chmod +x /tmp/brew-install
 /tmp/brew-install
 tar --zstd -cvf /usr/share/homebrew.tar.zst /home/linuxbrew/.linuxbrew
 rm /.dockerenv
+/usr/bin/chown -R 1000:1000 /home/linuxbrew
 
 echo "End installing Brew"
