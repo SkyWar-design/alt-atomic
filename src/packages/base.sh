@@ -6,6 +6,7 @@ apt-get install -y \
     zsh \
     golang \
     jq \
+    yq \
     virt-manager \
     fprintd \
     qemu-guest-agent \
