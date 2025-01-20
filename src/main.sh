@@ -23,6 +23,7 @@ echo "Running main.sh..."
 ./make/bootc.sh
 ./make/brew.sh
 ./make/zsh-plugins.sh
+./make/atomic-actions.sh
 ./configuration/clear.sh
 
 echo "All scripts executed successfully."
