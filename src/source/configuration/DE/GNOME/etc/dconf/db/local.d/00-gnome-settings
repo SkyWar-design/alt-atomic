@@ -15,7 +15,7 @@ sources=[('xkb', 'us'), ('xkb', 'ru')]
 [org/gnome/desktop/interface]
 font-name='SF Pro Display 12'
 document-font-name='SF Pro Display 12'
-monospace-font-name='FiraCode Nerd Font 13'
+monospace-font-name='FiraCode Nerd Font 12'
 
 [org/gnome/desktop/wm/preferences]
 button-layout=':minimize,maximize,close'
