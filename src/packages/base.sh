@@ -4,6 +4,7 @@ echo "Installing base packages"
 
 apt-get install -y \
     zsh \
+    golang \
     jq \
     virt-manager \
     fprintd \
