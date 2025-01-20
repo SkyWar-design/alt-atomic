@@ -20,9 +20,13 @@ echo "Building atomic-actions..."
 cd "${BUILD_DIR}"
 go build -o "${INSTALL_DIR}/atomic-actions"
 
-# Step 3: Install the binary
-echo "Installing atomic-actions binary to ${INSTALL_DIR}..."
-install -m 0755 "${INSTALL_DIR}/atomic-actions" "${INSTALL_DIR}"
+# Step 3: Verify binary installation
+if [[ -f "${INSTALL_DIR}/atomic-actions" ]]; then
+  echo "Binary atomic-actions successfully built at ${INSTALL_DIR}/atomic-actions"
+else
+  echo "Failed to build atomic-actions binary!" >&2
+  exit 1
+fi
 
 # Step 4: Clean and copy actions folder
 echo "Preparing actions directory..."
