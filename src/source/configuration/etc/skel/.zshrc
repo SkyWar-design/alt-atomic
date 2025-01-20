@@ -25,8 +25,3 @@ if [[ -f $zcompdump_file && $(( $(date +%s) - $(stat -c %Y $zcompdump_file) )) -
 else
     autoload -Uz compinit && compinit -d "$zcompdump_file"
 fi
-
-# load brew autocomplete
-if [ -d "/home/linuxbrew/.linuxbrew/share/zsh/site-functions" ]; then
-    fpath+=(/home/linuxbrew/.linuxbrew/share/zsh/site-functions)
-fi
