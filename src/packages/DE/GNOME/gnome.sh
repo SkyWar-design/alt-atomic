@@ -26,6 +26,7 @@ gnome-shell-extension-appindicator \
 gnome-shell-extension-blur-my-shell \
 gnome-shell-extension-dash-to-dock
 
+
 # Настройка
 /src/packages/DE/GNOME/settings.sh
 
