@@ -1,11 +1,13 @@
 [Unit]
 Description=Install user-level Flatpak apps on first login
-After=default.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
 ExecStart=/usr/libexec/flatpak-user-install.sh
 RemainAfterExit=yes
+TimeoutStartSec=300
 
 [Install]
 WantedBy=default.target
