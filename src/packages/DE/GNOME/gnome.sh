@@ -4,9 +4,7 @@ echo "Installing GNOME packages"
 
 apt-get install -y gnome3-minimal \
 firefox \
-pocl \
 fonts-ttf-cjkuni-ukai \
-gnome-initial-setup \
 gnome-browser-connector \
 gnome-software-disable-updates \
 gnome-tweaks \
