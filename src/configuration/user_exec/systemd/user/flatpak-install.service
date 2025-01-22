@@ -5,9 +5,10 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/sleep 5
 ExecStart=/usr/libexec/flatpak-user-install.sh
 RemainAfterExit=yes
-TimeoutStartSec=300
+TimeoutStartSec=600
 
 [Install]
 WantedBy=default.target
