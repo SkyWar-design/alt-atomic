@@ -35,3 +35,6 @@ RUN ./configuration/clear.sh
 WORKDIR /
 # Помечаем образ как bootc совместимый
 LABEL containers.bootc=1
+
+# Оптимизация для Buildx
+ARG BUILDKIT_INLINE_CACHE=1
