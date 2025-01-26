@@ -29,6 +29,7 @@ MODULES=$(find "${KERNEL_DIR}/${KERNEL_VERSION}/kernel/drivers" \( \
     \) -type f -name '*.ko*' | sed 's:.*/::')
 
 dracut --force \
+       --no-hostonly \
        --kver "$KERNEL_VERSION" \
        --add "qemu ostree virtiofs btrfs base overlayfs bluetooth drm plymouth" \
        --add-drivers "gpio-virtio.ko i2c-virtio.ko nd_virtio.ko virtio-iommu.ko virtio_pmem.ko virtio_rpmsg_bus.ko virtio_snd.ko vmw_vsock_virtio_transport.ko vmw_vsock_virtio_transport_common.ko vp_vdpa.ko virtiofs.ko ext4 btrfs.ko ahci.ko sd_mod.ko ahci_platform.ko sd_mod.ko evdev.ko virtio_scsi.ko virtio_blk.ko virtio-rng virtio_net.ko virtio-gpu.ko virtio-mmio.ko virtio_pci.ko virtio_console.ko virtio_input.ko crc32_generic.ko ata_piix.ko $MODULES" \
