@@ -17,6 +17,8 @@ echo "Running main.sh..."
 ./configuration/settings.sh
 ./configuration/user.sh
 ./configuration/kernel.sh
+
+# Сборка программ
 ./make/zstd.sh
 ./make/cargo.sh
 ./make/bootupd.sh

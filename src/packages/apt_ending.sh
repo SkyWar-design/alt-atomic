@@ -1,3 +1,3 @@
 #!/bin/bash
 
-apt-get clean && rm -rf /var/lib/apt/lists/*
+apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* && mkdir /var/lib/apt/lists/partial

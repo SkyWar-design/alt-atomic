@@ -13,7 +13,6 @@ rm -rf /root && ln -s var/root /root
 rm -rf /home && ln -s var/home /home
 ln -s sysroot/ostree /ostree
 
-mkdir /var/lib/apt/lists/partial
 rm -f /etc/fstab
 mkdir /sysroot
 cp -a ./source/bootupd/ /usr/lib/
