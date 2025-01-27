@@ -10,8 +10,7 @@ COPY src /src
 WORKDIR /src
 
 # Выполняем скрипт сборки с кэшированием
-RUN --mount=type=cache,target=/var/cache/apt \
-    ./main.sh
+RUN ./main.sh
 
 # Финальный этап
 FROM registry.altlinux.org/sisyphus/base:latest
