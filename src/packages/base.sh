@@ -5,7 +5,7 @@ echo "Installing base packages"
 apt-get install -y \
     zsh \
     golang \
-    nmap \
+    inxi \
     jq \
     yq \
     virt-manager \
