@@ -5,6 +5,7 @@ echo "Installing base packages"
 apt-get install -y \
     zsh \
     golang \
+    zram-generator \
     inxi \
     firmware-linux \
     jq \
