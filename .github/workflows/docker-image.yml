@@ -30,7 +30,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/skywar-design/alt-atomic:latest
+            ghcr.io/skywar-design/alt-atomic:source
             ghcr.io/skywar-design/alt-atomic:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
