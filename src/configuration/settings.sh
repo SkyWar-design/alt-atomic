@@ -48,6 +48,7 @@ cp /src/configuration/user_exec/systemd/user/* /usr/lib/systemd/user/
 cp /src/configuration/user_exec/libexec/* /usr/libexec/
 
 # Включаем сервисы
+systemctl enable NetworkManager
 systemctl enable libvirtd
 systemctl enable ntpd.service
 systemctl enable docker.socket
