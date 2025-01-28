@@ -6,6 +6,7 @@ apt-get install -y \
     zsh \
     golang \
     inxi \
+    firmware-linux \
     jq \
     yq \
     virt-manager \
