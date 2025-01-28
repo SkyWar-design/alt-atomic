@@ -82,9 +82,8 @@ apt-get install -y \
     libgio \
     libgio-devel \
     dracut \
-    kernel-image-6.12 \
-    kernel-modules-drm-6.12 \
-    kernel-headers-6.12 \
+    kernel-image-6.13 \
+    kernel-modules-drm-6.13 \
     rsync \
     plymouth \
     mesa-dri-drivers \
