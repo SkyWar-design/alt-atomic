@@ -9,7 +9,6 @@ if [ "$UID" -lt 1000 ]; then
     exit 0
 fi
 
-
 # Проверяем выполнение
 if [ -f "$GROUP_SETUP_VER_FILE" ]; then
     GROUP_SETUP_VER_RAN="$(cat "$GROUP_SETUP_VER_FILE")"
@@ -21,6 +20,20 @@ if [ "$GROUP_SETUP_VER" = "$GROUP_SETUP_VER_RAN" ]; then
     echo "Flatpak user install (version $GROUP_SETUP_VER) has already run. Exiting..."
     exit 0
 fi
+
+# Проверка наличия сети и доступности репозитория Flathub
+check_network() {
+    local url="https://dl.flathub.org/repo/"
+    echo "Checking connection to $url..."
+
+    if ! curl --connect-timeout 10 -s -I "$url" >/dev/null; then
+        echo "Error: Failed to connect to $url"
+        notify-send "Network error" "Check your internet connection and availability dl.flathub.org." --app-name="Flatpak Manager Service" -u CRITICAL
+        exit 1
+    fi
+}
+
+check_network
 
 notify-send "Flatpak Installation" "Запущена установка Flatpak приложений" --app-name="Flatpak Manager Service" -u NORMAL
 echo "Installing user-level Flatpaks..."

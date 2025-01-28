@@ -30,7 +30,7 @@ fi
 #append_group libvirt
 
 # Массив групп, в которые нужно добавить пользователей
-groups=(docker lxd cuse _xfsscrub fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera usershares)
+groups=(docker lxd cuse _xfsscrub fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera render usershares)
 
 # Получаем всех пользователей с UID >= 1000, исключая nobody
 userarray=($(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd))
