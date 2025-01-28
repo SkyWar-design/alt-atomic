@@ -1,5 +1,9 @@
 FROM registry.altlinux.org/sisyphus/base:latest
 
+ARG BUILD_TYPE="default"
+ENV BUILD_TYPE=$BUILD_TYPE
+
+RUN echo "Current BUILD_TYPE: $BUILD_TYPE"
 # Копируем скрипты
 COPY src /src
 
@@ -9,7 +13,7 @@ ARG PATH="/root/.cargo/bin:${PATH}"
 
 WORKDIR /src
 # Делаем один RUN запуск, потому что увеличние их числа добавляет ненужные слои и увеличивает обьем образа
-RUN chmod +x main.sh && ./main.sh
+#RUN ./main.sh
 
 WORKDIR /
 

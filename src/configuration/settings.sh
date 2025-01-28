@@ -14,6 +14,7 @@ rm -rf /home && ln -s var/home /home
 ln -s sysroot/ostree /ostree
 
 rm -f /etc/fstab
+mkdir -p /usr/lib/bootc/kargs.d/
 mkdir /sysroot
 cp -a ./source/bootupd/ /usr/lib/
 mkdir -p /usr/local/bin
