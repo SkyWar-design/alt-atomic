@@ -1,4 +1,4 @@
-name: Update Base Image
+name: Upgrade Base Image
 
 on:
   push:

@@ -1,6 +1,7 @@
 FROM ghcr.io/skywar-design/alt-atomic:base
 
 RUN apt-get update && \
+    apt-get install -y copyq && \
     apt-get dist-upgrade -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
