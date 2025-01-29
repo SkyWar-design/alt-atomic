@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Build Base image
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push default image
+      - name: Build and push base image
         uses: docker/build-push-action@v4
         with:
           context: .

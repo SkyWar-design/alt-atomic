@@ -1,4 +1,4 @@
-FROM ghcr.io/skywar-design/alt-atomic:base
+FROM ghcr.io/skywar-design/alt-atomic:base-nv
 
 RUN apt-get update && \
     apt-get dist-upgrade -y && \
