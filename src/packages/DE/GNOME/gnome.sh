@@ -44,7 +44,6 @@ firefox \
 brasero \
 fonts-ttf-cjkuni-ukai \
 gnome-browser-connector \
-packagekit \
 gnome-software \
 gnome-tweaks \
 gnome-keyring-ssh \
