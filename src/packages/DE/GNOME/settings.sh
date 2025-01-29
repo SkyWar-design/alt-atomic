@@ -8,13 +8,13 @@ rm -f /var/lib/openvpn/dev/urandom
 ln -s /dev/urandom /var/lib/openvpn/dev/urandom
 
 # Удаляем неактуальный ярлык
-rm -f /usr/share/applications/indexhtml.desktop
+#rm -f /usr/share/applications/indexhtml.desktop
 
 # Спрячем приложения
 sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applications/htop.desktop
 sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applications/nvtop.desktop
-sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applications/org.gnome.Console.desktop
-sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applications/org.gnome.Epiphany.desktop
+#sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applications/org.gnome.Console.desktop
+#sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applications/org.gnome.Epiphany.desktop
 
 # включим GDM
 systemctl enable gdm
