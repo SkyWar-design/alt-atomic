@@ -41,7 +41,6 @@ apt-get install -y \
   key-rack \
   gnome-extension-manager \
   firefox \
-  brasero \
   fonts-ttf-cjkuni-ukai \
   gnome-browser-connector \
   gnome-software \
@@ -60,6 +59,7 @@ apt-get install -y \
   xorg-drv-amdgpu \
   xorg-drv-vmware \
   xorg-drv-nouveau \
+  gnome-console \
   ptyxis \
   pipewire \
   wireplumber \
