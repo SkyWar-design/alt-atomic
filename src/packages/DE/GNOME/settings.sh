@@ -17,6 +17,8 @@ sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nHidden=true@g' /usr/share/applica
 
 # включим GDM
 systemctl enable gdm
+systemctl enable avahi-daemon
+systemctl mask packagekit.service
 
 # Синхронизируем конфиги
 rsync -av --progress /src/source/configuration/DE/GNOME/etc/ /etc/

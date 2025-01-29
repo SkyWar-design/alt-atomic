@@ -24,19 +24,19 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Build and push NVIDIA image
-#        uses: docker/build-push-action@v4
-#        with:
-#          context: .
-#          push: true
-#          tags: |
-#            ghcr.io/skywar-design/alt-atomic:base-nv
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=max
-#          platforms: linux/amd64
-#          build-args: |
-#            BUILDKIT_INLINE_CACHE=1
-#            BUILD_TYPE=nvidia
+      - name: Build and push NVIDIA image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/skywar-design/alt-atomic:base-nv
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+            BUILD_TYPE=nvidia
 
       - name: Build and push default image
         uses: docker/build-push-action@v4
