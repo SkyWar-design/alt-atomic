@@ -51,7 +51,8 @@ cp /src/configuration/user_exec/libexec/* /usr/libexec/
 # Включаем сервисы
 systemctl enable NetworkManager
 systemctl enable libvirtd
-systemctl enable ntpd.service
+systemctl enable chronyd
+#systemctl enable ntpd.service
 systemctl enable docker.socket
 systemctl enable podman.socket
 systemctl enable atomic-groups.service

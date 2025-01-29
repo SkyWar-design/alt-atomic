@@ -89,6 +89,6 @@ apt-get install -y \
     plymouth \
     mesa-dri-drivers \
     glxinfo \
-    ntp
+    chrony
 
 echo "End installing base packages"
