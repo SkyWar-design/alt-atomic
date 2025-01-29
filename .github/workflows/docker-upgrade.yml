@@ -1,4 +1,5 @@
-name: Docker Image CI
+name: Update Base Image
+
 on:
   push:
     branches: [ "main" ]
@@ -6,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,24 +25,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Build and push NVIDIA image
-#        uses: docker/build-push-action@v4
-#        with:
-#          context: .
-#          push: true
-#          tags: ghcr.io/skywar-design/alt-atomic:base-nv
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=max
-#          platforms: linux/amd64
-#          build-args: BUILD_TYPE=nvidia
-
-      - name: Build and push default image
+      - name: Build and push updated image
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: DockerfileUpgrade
           push: true
-          tags: ghcr.io/skywar-design/alt-atomic:base
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: |
+            ghcr.io/skywar-design/alt-atomic:latest
           platforms: linux/amd64
-          build-args: BUILD_TYPE=default
