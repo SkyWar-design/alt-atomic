@@ -1,4 +1,4 @@
-FROM registry.altlinux.org/sisyphus/base:latest
+FROM registry.altlinux.org/sisyphus/base:latest AS base
 
 # Копируем скрипты
 COPY src /src
@@ -12,15 +12,18 @@ ARG BUILD_TYPE="default"
 ENV BUILD_TYPE=$BUILD_TYPE
 
 WORKDIR /src
-# Делаем один RUN запуск, потому что увеличние их числа добавляет ненужные слои и увеличивает обьем образа
+# Выполняем все шаги в одном RUN для минимизации слоёв
 RUN ./main.sh
+
+# Стадия 2: Переход к пустому образу
+FROM scratch
+
+# Копируем всё содержимое из предыдущего образа
+COPY --from=base / /
 
 WORKDIR /
 
 # Помечаем образ как bootc совместимый
 LABEL containers.bootc=1
-
-# Оптимизация для Buildx
-ARG BUILDKIT_INLINE_CACHE=1
 
 CMD /sbin/init

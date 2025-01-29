@@ -5,7 +5,11 @@ exec='ptyxis'
 favorite-apps=['firefox.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Software.desktop']
 enabled-extensions=['appindicatorsupport@rgcjonas.gmail.com', 'dash-to-dock@micxgx.gmail.com']
 
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/gnome/map-l.svg'
+
 [org/gnome/software]
+download-updates=false
 allow-updates=false
 allow-system-install=false
 
