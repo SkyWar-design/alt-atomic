@@ -69,6 +69,7 @@ apt-get install -y \
   cups-browsed \
   fwupd \
   libnss-mdns \
+  wsdd \
   iucode_tool
 
 # Настройка
