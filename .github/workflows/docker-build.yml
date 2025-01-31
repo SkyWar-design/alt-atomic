@@ -34,11 +34,11 @@ jobs:
           platforms: linux/amd64
           build-args: BUILD_TYPE=default
 
-      - name: Build and push nvidia image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/skywar-design/alt-atomic:base-nv
-          platforms: linux/amd64
-          build-args: BUILD_TYPE=nvidia
+#      - name: Build and push nvidia image
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: .
+#          push: true
+#          tags: ghcr.io/skywar-design/alt-atomic:base-nv
+#          platforms: linux/amd64
+#          build-args: BUILD_TYPE=nvidia

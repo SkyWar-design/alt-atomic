@@ -1,0 +1,13 @@
+[Unit]
+Description=Sync using system users and groups
+DefaultDependencies=no
+After=systemd-tmpfiles-setup.service
+Before=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/check_user_and_group.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
