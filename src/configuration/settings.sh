@@ -52,11 +52,10 @@ cp /src/configuration/user_exec/libexec/* /usr/libexec/
 systemctl enable NetworkManager
 systemctl enable libvirtd
 systemctl enable chrony
-#systemctl enable ntpd.service
 systemctl enable docker.socket
 systemctl enable podman.socket
 systemctl enable sync-users.service
-systemctl enable atomic-groups.service
+#systemctl enable atomic-groups.service
 systemctl enable brew-setup.service
 systemctl enable brew-upgrade.timer
 systemctl enable brew-update.timer

@@ -1,8 +1,7 @@
 [Unit]
 Description=Sync using system users and groups
-# Не отключаем стандартные зависимости, либо явно указываем необходимые зависимости
 After=systemd-tmpfiles-setup.service local-fs.target
-# Если требуется, можно добавить конкретное монтирование:
+# Возможно стоит добавить конкретное монтирование:
 # After=systemd-tmpfiles-setup.service usr.mount
 
 [Service]

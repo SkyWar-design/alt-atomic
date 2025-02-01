@@ -30,24 +30,24 @@ fi
 #append_group libvirt
 
 # Массив групп, в которые нужно добавить пользователей
-#groups=(docker lxd cuse _xfsscrub fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera render usershares)
-#
-## Получаем всех пользователей с UID >= 1000, исключая nobody
-#userarray=($(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd))
-#
-## Проверяем, есть ли пользователи
-#if [[ ${#userarray[@]} -eq 0 ]]; then
-#    echo "No users with UID >= 1000 found."
-#    exit 0
-#fi
-#
-## Добавляем пользователей в указанные группы
-#for user in "${userarray[@]}"; do
-#    echo "Adding user $user to groups..."
-#    for group in "${groups[@]}"; do
-#        usermod -aG "$group" "$user"
-#    done
-#done
+groups=(docker lxd cuse _xfsscrub fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera render usershares)
+
+# Получаем всех пользователей с UID >= 1000, исключая nobody
+userarray=($(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd))
+
+# Проверяем, есть ли пользователи
+if [[ ${#userarray[@]} -eq 0 ]]; then
+    echo "No users with UID >= 1000 found."
+    exit 0
+fi
+
+# Добавляем пользователей в указанные группы
+for user in "${userarray[@]}"; do
+    echo "Adding user $user to groups..."
+    for group in "${groups[@]}"; do
+        usermod -aG "$group" "$user"
+    done
+done
 
 # Запоминаем выполнение вместе с версией скрипта
 echo "Writing state file"
