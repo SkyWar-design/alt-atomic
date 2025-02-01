@@ -159,8 +159,9 @@ done < /usr/etc/passwd
 
 # Дополнительная проверка директорий для всех системных пользователей (uid < 1000)
 while IFS=: read -r username _ uid _ home _; do
-    # Рассматриваем только системных пользователей, исключая специальные записи
-    if [[ "$uid" -ge 1000 || "$home" == "/dev/null" || "$home" == "/" ]]; then
+    # Исключаем пользователей с uid >= 1000, а также специальные записи (home '/dev/null' или '/'),
+    # и дополнительно исключаем root и nobody.
+    if [[ "$uid" -ge 1000 || "$home" == "/dev/null" || "$home" == "/" || "$username" == "root" || "$username" == "nobody" ]]; then
         continue
     fi
 
