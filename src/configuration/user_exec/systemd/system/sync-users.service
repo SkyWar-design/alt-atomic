@@ -1,8 +1,9 @@
 [Unit]
 Description=Sync using system users and groups
-DefaultDependencies=no
-After=systemd-tmpfiles-setup.service
-Before=local-fs.target
+# Не отключаем стандартные зависимости, либо явно указываем необходимые зависимости
+After=systemd-tmpfiles-setup.service local-fs.target
+# Если требуется, можно добавить конкретное монтирование:
+# After=systemd-tmpfiles-setup.service usr.mount
 
 [Service]
 Type=oneshot
