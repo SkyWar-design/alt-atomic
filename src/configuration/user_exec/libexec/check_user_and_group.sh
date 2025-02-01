@@ -108,33 +108,72 @@ while IFS=: read -r username _ uid gid gecos home shell; do
         continue
     fi
 
-    if getent passwd "$username" >/dev/null 2>&1; then
-        log "Пользователь '$username' уже существует – пропускаем создание."
-    else
-        # Определяем имя основной группы для пользователя.
-        # Пытаемся по значению поля gid найти группу из /usr/etc/group
-        primary_group="${gid_to_group[$gid]:-}"
-        if [ -z "$primary_group" ]; then
-            # Если соответствующей группы не найдено, используем имя пользователя
-            primary_group="$username"
-            if ! getent group "$primary_group" >/dev/null 2>&1; then
-                log "Основная группа '$primary_group' для пользователя '$username' не найдена – создаём."
-                groupadd --system "$primary_group"
+   if getent passwd "$username" >/dev/null 2>&1; then
+       log "Пользователь '$username' уже существует – пропускаем создание."
+   else
+       # Определяем имя основной группы для пользователя.
+       primary_group="${gid_to_group[$gid]:-}"
+       if [ -z "$primary_group" ]; then
+           primary_group="$username"
+           if ! getent group "$primary_group" >/dev/null 2>&1; then
+               log "Основная группа '$primary_group' для пользователя '$username' не найдена – создаём."
+               groupadd --system "$primary_group"
+           fi
+       fi
+
+       # Если shell равен '/dev/null', используем корректный путь, например /sbin/nologin.
+       effective_shell="$shell"
+       if [ "$shell" = "/dev/null" ]; then
+            effective_shell="/sbin/nologin"
+       fi
+
+       # Если home равен '/dev/null' или TCB-каталог уже существует, используем флаг -M.
+       if [ "$home" = "/dev/null" ] || [ -d "/etc/tcb/$username" ]; then
+            if [ -d "/etc/tcb/$username" ]; then
+                log "TCB-каталог /etc/tcb/$username уже существует, временно переименовываю его."
+                mv "/etc/tcb/$username" "/etc/tcb/${username}.bak"
             fi
-        fi
-
-        log "Создаём пользователя '$username' с основной группой '$primary_group', home='$home', shell='$shell'."
-        # Создаём системного пользователя; uid будет назначен системой динамически.
-        useradd --system -g "$primary_group" -c "$gecos" -d "$home" -s "$shell" "$username"
-
-        # Если значение домашней директории не '/dev/null' или '/', а такой директории ещё нет, то создаём её.
-        if [[ "$home" != "/dev/null" && "$home" != "/" && ! -d "$home" ]]; then
-            log "Создаю директорию '$home' для пользователя '$username'."
-            mkdir -p "$home"
-            chown "$username:$primary_group" "$home"
-        fi
-    fi
+            log "Создаю пользователя '$username' с флагом -M (не создавать домашнюю директорию), основная группа '$primary_group', home='$home', shell='$effective_shell'."
+            # Пытаемся создать пользователя с опцией -M; если useradd завершится с ошибкой, игнорируем её.
+            if ! useradd --system -M -g "$primary_group" -c "$gecos" -d "$home" -s "$effective_shell" "$username"; then
+                log "Ошибка при создании пользователя '$username', возможно, TCB-каталог уже существует."
+            fi
+            # Если временный каталог был создан, возвращаем его обратно и устанавливаем права.
+            if [ -d "/etc/tcb/${username}.bak" ]; then
+                log "Восстанавливаю TCB-каталог для пользователя '$username'."
+                mv "/etc/tcb/${username}.bak" "/etc/tcb/$username"
+                chown "$username:$primary_group" "/etc/tcb/$username"
+            fi
+       else
+            log "Создаю пользователя '$username' с основной группой '$primary_group', home='$home', shell='$effective_shell'."
+            useradd --system -g "$primary_group" -c "$gecos" -d "$home" -s "$effective_shell" "$username"
+            # Если home не '/dev/null' или '/' и директория отсутствует, создаём её.
+            if [[ "$home" != "/dev/null" && "$home" != "/" && ! -d "$home" ]]; then
+                log "Создаю директорию '$home' для пользователя '$username'."
+                mkdir -p "$home"
+                chown "$username:$primary_group" "$home"
+            fi
+       fi
+   fi
 done < /usr/etc/passwd
+
+# Дополнительная проверка директорий для всех системных пользователей (uid < 1000)
+while IFS=: read -r username _ uid _ home _; do
+    # Рассматриваем только системных пользователей, исключая специальные записи
+    if [[ "$uid" -ge 1000 || "$home" == "/dev/null" || "$home" == "/" ]]; then
+        continue
+    fi
+
+    if [ -d "$home" ]; then
+        log "Директория '$home' для пользователя '$username' уже существует."
+    else
+        log "Создаю домашнюю директорию '$home' для пользователя '$username'."
+        mkdir -p "$home"
+        # Получаем основную группу пользователя (поле 4)
+        primary_group=$(getent passwd "$username" | cut -d: -f4)
+        chown "$username:$primary_group" "$home"
+    fi
+done < /etc/passwd
 
 # Дополнительно: добавляем пользователей в supplementary-группы согласно спискам в /usr/etc/group.
 log "Обработка дополнительных членов групп из /usr/etc/group..."
