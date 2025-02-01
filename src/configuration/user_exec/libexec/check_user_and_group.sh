@@ -158,10 +158,10 @@ while IFS=: read -r username _ uid gid gecos home shell; do
 done < /usr/etc/passwd
 
 # Дополнительная проверка директорий для всех системных пользователей (uid < 1000)
-while IFS=: read -r username _ uid _ home _; do
-    # Исключаем пользователей с uid >= 1000, а также специальные записи (home '/dev/null' или '/'),
-    # и дополнительно исключаем root и nobody.
-    if [[ "$uid" -ge 1000 || "$home" == "/dev/null" || "$home" == "/" || "$username" == "root" || "$username" == "nobody" ]]; then
+while IFS=: read -r username _ uid _ _ home _; do
+    # Исключаем пользователей с uid >= 1000, а также записи, у которых home равен '/dev/null' или '/',
+    # дополнительно исключаем root и nobody, а также директории, начинающиеся с /usr.
+    if [[ "$uid" -ge 1000 || "$home" == "/dev/null" || "$home" == "/" || "$username" == "root" || "$username" == "nobody" || "$home" == /usr* ]]; then
         continue
     fi
 
@@ -170,11 +170,11 @@ while IFS=: read -r username _ uid _ home _; do
     else
         log "Создаю домашнюю директорию '$home' для пользователя '$username'."
         mkdir -p "$home"
-        # Получаем основную группу пользователя (поле 4)
+        # Получаем основную группу пользователя (четвертое поле)
         primary_group=$(getent passwd "$username" | cut -d: -f4)
         chown "$username:$primary_group" "$home"
     fi
-done < /etc/passwd
+done < /usr/etc/passwd
 
 # Дополнительно: добавляем пользователей в supplementary-группы согласно спискам в /usr/etc/group.
 log "Обработка дополнительных членов групп из /usr/etc/group..."
