@@ -3,6 +3,7 @@
 echo "Installing GNOME packages"
 
 apt-get install -y \
+  openssh-server \
   gnome-session-wayland \
   gnome-session-xsession \
   gnome-control-center \

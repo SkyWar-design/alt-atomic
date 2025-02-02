@@ -1,0 +1,9 @@
+[Unit]
+Description=System update timer
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+
+[Install]
+WantedBy=timers.target

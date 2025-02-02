@@ -55,8 +55,8 @@ systemctl enable chrony
 systemctl enable docker.socket
 systemctl enable podman.socket
 systemctl enable sync-users.service
-#systemctl enable atomic-groups.service
 systemctl enable brew-setup.service
+systemctl enable update-image-task.timer
 systemctl enable brew-upgrade.timer
 systemctl enable brew-update.timer
 systemctl --global enable flatpak-install.service
