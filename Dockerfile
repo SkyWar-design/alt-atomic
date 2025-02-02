@@ -26,4 +26,4 @@ WORKDIR /
 # Помечаем образ как bootc совместимый
 LABEL containers.bootc=1
 
-CMD /sbin/init
+CMD ["/sbin/init"]
