@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Installing nvidia packages"
 
 apt-get install -y apt-repo-lakostis-kmodules apt-repo-lakostis && \
