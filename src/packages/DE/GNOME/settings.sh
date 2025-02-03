@@ -21,8 +21,9 @@ systemctl enable avahi-daemon
 systemctl enable wsdd
 systemctl mask packagekit.service
 
-# Синхронизируем конфиги
+# Синхронизируем файлы
 rsync -av --progress /src/source/configuration/DE/GNOME/etc/ /etc/
+rsync -av --progress /src/source/configuration/DE/GNOME/usr/ /usr/
 
 # Обновление dconf
 dconf update
