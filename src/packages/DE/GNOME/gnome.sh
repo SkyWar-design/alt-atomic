@@ -26,6 +26,7 @@ apt-get install -y \
   samba-usershares \
   file-roller \
   gnome-text-editor \
+  clapper \
   loupe \
   gnome-weather \
   gnome-clocks \
@@ -38,8 +39,7 @@ apt-get install -y \
   gnome-tour \
   papers \
   power-profiles-daemon \
-  g4music \
-  key-rack \
+  systemd-ssh-agent \
   gnome-extension-manager \
   firefox \
   fonts-ttf-cjkuni-ukai \
