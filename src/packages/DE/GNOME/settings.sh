@@ -23,7 +23,6 @@ systemctl mask packagekit.service
 
 # Синхронизируем файлы
 rsync -av --progress /src/source/configuration/DE/GNOME/etc/ /etc/
-rsync -av --progress /src/source/configuration/DE/GNOME/usr/ /usr/
 
 # Обновление dconf
 dconf update
