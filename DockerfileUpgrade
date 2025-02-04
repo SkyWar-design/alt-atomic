@@ -6,6 +6,5 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir /var/lib/apt/lists/partial
 
-# Выполняем скрипт, временно монтируя директорию src из контекста сборки в контейнер
 RUN --mount=type=bind,source=./src,target=/src \
     /src/make/atomic-actions.sh
