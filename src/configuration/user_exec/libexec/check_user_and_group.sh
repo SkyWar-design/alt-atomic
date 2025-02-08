@@ -47,7 +47,7 @@ done
 # Часть 2. Объединение /etc/passwd
 ###############################################################################
 
-BASE_PASSWD="/usr/lib/passwd"
+BASE_PASSWD="/usr/etc/passwd"
 LOCAL_PASSWD="/etc/passwd"
 MERGED_PASSWD="/tmp/merged-passwd.$$"
 
@@ -100,7 +100,7 @@ echo "/etc/passwd обновлён."
 # Часть 3. Объединение /etc/group
 ###############################################################################
 
-BASE_GROUP="/usr/lib/group"
+BASE_GROUP="/usr/etc/group"
 LOCAL_GROUP="/etc/group"
 MERGED_GROUP="/tmp/merged-group.$$"
 
