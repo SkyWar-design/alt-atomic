@@ -1,11 +1,14 @@
 #!/bin/bash
-# Скрипт объединяет учетные записи и группы из базовых файлов (/usr/etc/passwd и /usr/etc/group)
-# с локальными (/etc/passwd и /etc/group) в режиме bootc usr-overlay.
+# Скрипт объединяет учётные записи и группы из базовых файлов (/usr/etc/passwd и /usr/etc/group)
+# с локальными (/etc/passwd и /etc/group) в режиме usr-overlay.
+#
 # Основная идея:
-#   - Для passwd: оставить записи с UID>=1000 из локального файла и взять системные (UID<1000)
+#   - Для passwd: оставить записи с UID ≥ 1000 из локального файла и добавить системные (UID < 1000)
 #     из базового файла.
-#   - Для group: итоговый merged-файл должен содержать все группы из базового файла,
-#     а также локальные группы, отсутствующие в базовом, если они являются primary для каких-либо пользователей.
+#   - Для group: итоговый merged-файл должен содержать все группы из базового файла.
+#     Если для группы из базового файла значение GID отличается от локального, используется базовый GID,
+#     а список членов объединяется (без дублирования).
+#     Локальные группы, отсутствующие в базовом файле, сохраняются только если они являются основной группой для какого-либо пользователя.
 #
 # Перед запуском сделайте резервные копии /etc/passwd и /etc/group.
 #
@@ -14,14 +17,14 @@ set -euo pipefail
 echo "=== Начало синхронизации пользователей и групп ==="
 
 ###############################################################################
-# Часть 1. Добавление пользователей в указанные дополнительные группы
+# Часть 1. Добавление пользователей в дополнительные группы
 ###############################################################################
 groups_to_add=(docker lxd cuse fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera render usershares)
 
-# Получаем всех пользователей с UID >= 1000, исключая "nobody"
+# Получаем всех пользователей с UID ≥ 1000, исключая "nobody"
 userarray=($(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd))
 if [[ ${#userarray[@]} -eq 0 ]]; then
-    echo "Нет пользователей с UID >= 1000."
+    echo "Нет пользователей с UID ≥ 1000."
     exit 0
 fi
 
@@ -33,7 +36,7 @@ for user in "${userarray[@]}"; do
             continue
         fi
         if id -nG "$user" | tr ' ' '\n' | grep -qx "$grp"; then
-            echo "Пользователь $user уже в группе $grp, пропускаем."
+            echo "Пользователь $user уже состоит в группе $grp, пропускаем."
         else
             echo "Добавляем пользователя $user в группу $grp..."
             usermod -aG "$grp" "$user"
@@ -42,41 +45,44 @@ for user in "${userarray[@]}"; do
 done
 
 ###############################################################################
-# Часть 2. Объединение /etc/passwd
+# Часть 2. Объединение файла /etc/passwd
 ###############################################################################
 BASE_PASSWD="/usr/etc/passwd"
 LOCAL_PASSWD="/etc/passwd"
 MERGED_PASSWD="/tmp/merged-passwd.$$"
 
-declare -A base_passwd_arr   # username -> полная строка из базового файла
-declare -A local_passwd_arr  # username -> полная строка из локального файла
+declare -A base_passwd_arr   # base_passwd_arr[username]=строка из базового файла
+declare -A local_passwd_arr  # local_passwd_arr[username]=строка из локального файла
 
-# Чтение базового файла (предполагается, что здесь только системные аккаунты)
-while IFS=: read -r username passwd uid gid gecos home shell; do
+# Чтение базового файла (системные аккаунты, UID < 1000)
+while IFS=':' read -r username passwd uid gid gecos home shell; do
+    username=$(echo "$username" | xargs)
     [[ -z "$username" ]] && continue
     base_passwd_arr["$username"]="${username}:${passwd}:${uid}:${gid}:${gecos}:${home}:${shell}"
 done < "$BASE_PASSWD"
 
 # Чтение локального файла
-while IFS=: read -r username passwd uid gid gecos home shell; do
+while IFS=':' read -r username passwd uid gid gecos home shell; do
+    username=$(echo "$username" | xargs)
     [[ -z "$username" ]] && continue
     local_passwd_arr["$username"]="${username}:${passwd}:${uid}:${gid}:${gecos}:${home}:${shell}"
 done < "$LOCAL_PASSWD"
 
-# Формируем новый merged-файл.
-> "$MERGED_PASSWD"
+# Создаем временный файл для объединенного списка
+rm -f "$MERGED_PASSWD"
+: > "$MERGED_PASSWD" || { echo "Ошибка: не удалось создать $MERGED_PASSWD"; exit 1; }
 
-# Сначала добавляем локальные записи для пользователей с UID>=1000 (обычные пользователи)
+# Добавляем локальные записи для пользователей с UID ≥ 1000
 for username in "${!local_passwd_arr[@]}"; do
-    IFS=: read -r _ _ local_uid _ _ _ _ <<< "${local_passwd_arr[$username]}"
+    IFS=':' read -r _ _ local_uid _ _ _ _ <<< "${local_passwd_arr[$username]}"
     if (( local_uid >= 1000 )); then
         echo "${local_passwd_arr[$username]}" >> "$MERGED_PASSWD"
     fi
 done
 
-# Затем добавляем системные записи (UID<1000) из базового файла
+# Добавляем системные записи (UID < 1000) из базового файла
 for username in "${!base_passwd_arr[@]}"; do
-    IFS=: read -r _ _ base_uid _ _ _ _ <<< "${base_passwd_arr[$username]}"
+    IFS=':' read -r _ _ base_uid _ _ _ _ <<< "${base_passwd_arr[$username]}"
     if (( base_uid < 1000 )); then
         echo "${base_passwd_arr[$username]}" >> "$MERGED_PASSWD"
     fi
@@ -90,76 +96,79 @@ mv "$MERGED_PASSWD" "$LOCAL_PASSWD"
 echo "/etc/passwd обновлён."
 
 ###############################################################################
-# Часть 3. Объединение /etc/group
+# Часть 3. Объединение файла /etc/group с корректировкой GID и объединением списков членов
 ###############################################################################
 BASE_GROUP="/usr/etc/group"
 LOCAL_GROUP="/etc/group"
 MERGED_GROUP="/tmp/merged-group.$$"
 
-declare -A base_group_arr  # group -> полная строка из базового файла
-declare -A base_gid_arr    # group -> gid из базового файла
-declare -A local_group_arr # group -> полная строка из локального файла
+declare -A base_group_arr  # base_group_arr[group]=строка из базового файла
+declare -A base_gid_arr    # base_gid_arr[group]=GID из базового файла
+declare -A local_group_arr # local_group_arr[group]=строка из локального файла
 
 # Чтение базового файла групп
-while IFS=: read -r grp pwd gid members; do
+while IFS=':' read -r grp pwd gid members; do
+    grp=$(echo "$grp" | xargs)
     [[ -z "$grp" ]] && continue
-    base_group_arr["$grp"]="${grp}:${pwd}:${gid}:${members}"
-    base_gid_arr["$grp"]="$gid"
+    gid_clean=$(echo "$gid" | tr -d '[:space:]')
+    base_group_arr["$grp"]="${grp}:${pwd}:${gid_clean}:${members}"
+    base_gid_arr["$grp"]="$gid_clean"
 done < "$BASE_GROUP"
 
 # Чтение локального файла групп
-while IFS=: read -r grp pwd gid members; do
+while IFS=':' read -r grp pwd gid members; do
+    grp=$(echo "$grp" | xargs)
     [[ -z "$grp" ]] && continue
-    local_group_arr["$grp"]="${grp}:${pwd}:${gid}:${members}"
+    gid_clean=$(echo "$gid" | tr -d '[:space:]')
+    local_group_arr["$grp"]="${grp}:${pwd}:${gid_clean}:${members}"
 done < "$LOCAL_GROUP"
 
-# Составляем список основных групп, используемых в /etc/passwd.
-# Для каждого пользователя (например, с UID>=1000 и системных) определяем primary group по 4-му полю.
-declare -A primary_groups  # group_name -> 1
-while IFS=: read -r username _ _ gid _; do
-    grp_name=$(getent group "$gid" | cut -d: -f1)
+# Сбор основных групп, используемых в /etc/passwd
+declare -A primary_groups  # primary_groups[group]=1
+while IFS=':' read -r username _ _ gid _; do
+    gid_clean=$(echo "$gid" | tr -d '[:space:]')
+    grp_name=$(getent group "$gid_clean" | cut -d: -f1)
     if [[ -n "$grp_name" ]]; then
         primary_groups["$grp_name"]=1
     fi
-done < "$LOCAL_PASSWD"
+done < /etc/passwd
 
-> "$MERGED_GROUP"
+# Создаем временный файл для объединенного списка групп
+rm -f "$MERGED_GROUP"
+: > "$MERGED_GROUP" || { echo "Ошибка: не удалось создать $MERGED_GROUP"; exit 1; }
 
-# 1. Для групп, присутствующих в базовом файле: используем их,
-#    если локально есть такая группа, обновляем GID, оставляя прочие поля.
+# Обработка групп, присутствующих в базовом файле
 for grp in "${!base_group_arr[@]}"; do
     base_gid_val="${base_gid_arr[$grp]}"
     if [[ -n "${local_group_arr[$grp]:-}" ]]; then
-        IFS=: read -r lgrp lpwd lgid lmembers <<< "${local_group_arr[$grp]}"
+        IFS=':' read -r lgrp lpwd lgid lmembers <<< "${local_group_arr[$grp]}"
+        lgid=$(echo "$lgid" | tr -d '[:space:]')
         if [[ "$lgid" != "$base_gid_val" ]]; then
-            echo "Обновление группы '$grp': локальный GID $lgid заменяется на базовый GID $base_gid_val."
             lgid="$base_gid_val"
         fi
-        echo "${grp}:${lpwd}:${lgid}:${lmembers}" >> "$MERGED_GROUP"
+        IFS=':' read -r _ _ _ bmembers <<< "${base_group_arr[$grp]}"
+        # Объединяем списки членов из локальной и базовой записей без дубликатов
+        merged_members=$(echo "$lmembers,$bmembers" | tr ',' '\n' | awk 'NF' | sort -u | paste -sd, -)
+        echo "${grp}:${lpwd}:${lgid}:${merged_members}" >> "$MERGED_GROUP"
     else
-        echo "Добавление группы '$grp' из базового файла, так как её нет в /etc/group."
         echo "${base_group_arr[$grp]}" >> "$MERGED_GROUP"
     fi
 done
 
-# 2. Добавляем в итоговый merged-файл те группы, которые есть в локальном файле,
-#    но отсутствуют в базовом, если они являются основными для каких-либо пользователей.
+# Обработка локальных групп, отсутствующих в базовом файле
 for grp in "${!local_group_arr[@]}"; do
     if [[ -z "${base_group_arr[$grp]:-}" ]]; then
         if [[ -n "${primary_groups[$grp]:-}" ]]; then
-            echo "Сохраняется локальная группа '$grp', так как она является основной для пользователя."
             echo "${local_group_arr[$grp]}" >> "$MERGED_GROUP"
-        else
-            echo "Удаление локальной группы '$grp', отсутствующей в базовом файле и не являющейся основной."
         fi
     fi
 done
 
 sort "$MERGED_GROUP" -o "$MERGED_GROUP"
-echo "Объединение /etc/group завершено. Результат: $MERGED_GROUP"
+echo "Объединение /etc/group завершено. Результат:"
 
 cp "$LOCAL_GROUP" "${LOCAL_GROUP}.bak"
-mv "$MERGED_GROUP" "$LOCAL_GROUP"
+cat "$MERGED_GROUP" > "$LOCAL_GROUP"
 echo "/etc/group обновлён."
 
-echo "=== Синхронизация завершена ==="
+echo "=== Синхронизация пользователей и групп завершена ==="
