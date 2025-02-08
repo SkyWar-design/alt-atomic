@@ -4,16 +4,18 @@ echo "Installing base packages"
 
 apt-get install -y \
     zsh \
+    libnss-altfiles \
     golang \
     zram-generator \
     inxi \
     firmware-linux \
     jq \
     yq \
-    virt-manager \
     fprintd \
     qemu-guest-agent \
     spice-vdagent \
+    bash-completion \
+    zsh-completions \
     starship \
     htop \
     notify-send \

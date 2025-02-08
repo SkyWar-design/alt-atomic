@@ -24,7 +24,6 @@ else
     --exclude=/run \
     --exclude=/boot \
     --exclude=/tmp \
-    --exclude=/etc \
     --exclude=/var \
     --exclude=/output \
     / /tmp/rootfscopy/

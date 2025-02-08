@@ -120,13 +120,18 @@ while IFS=: read -r username _ uid gid gecos home shell; do
        # Если shell равен '/dev/null', используем корректный путь, например /sbin/nologin.
        effective_shell="$shell"
        if [ "$shell" = "/dev/null" ]; then
-            effective_shell="/sbin/nologin"
+            #effective_shell="/sbin/nologin"
+            effective_shell="/dev/null"
        fi
 
        # Если home равен '/dev/null' или TCB-каталог уже существует, используем флаг -M.
        if [ "$home" = "/dev/null" ] || [ -d "/etc/tcb/$username" ]; then
             if [ -d "/etc/tcb/$username" ]; then
-                log "TCB-каталог /etc/tcb/$username уже существует, временно переименовываю его."
+                log "TCB-каталог /etc/tcb/$username уже существует, готовлюсь к переименованию."
+                if [ -d "/etc/tcb/${username}.bak" ]; then
+                    log "Резервный каталог /etc/tcb/${username}.bak уже существует, удаляю его."
+                    rm -rf "/etc/tcb/${username}.bak"
+                fi
                 mv "/etc/tcb/$username" "/etc/tcb/${username}.bak"
             fi
             log "Создаю пользователя '$username' с флагом -M (не создавать домашнюю директорию), основная группа '$primary_group', home='$home', shell='$effective_shell'."

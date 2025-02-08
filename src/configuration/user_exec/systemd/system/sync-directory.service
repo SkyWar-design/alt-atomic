@@ -1,0 +1,11 @@
+[Unit]
+Description=Sync directory
+After=systemd-tmpfiles-setup.service local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/check_var_directory.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

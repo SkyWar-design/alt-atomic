@@ -4,6 +4,9 @@ echo "Installing GNOME packages"
 
 apt-get install -y \
   openssh-server \
+  virt-manager \
+  nautilus-python \
+  gtk3-theme-adw-gtk3 \
   gnome-session-wayland \
   gnome-session-xsession \
   gnome-control-center \
@@ -13,6 +16,7 @@ apt-get install -y \
   dconf-editor \
   fonts-otf-abattis-cantarell \
   gnome-backgrounds \
+  pinentry-gnome3 \
   yelp \
   gnome-system-monitor \
   gnome-logs \
