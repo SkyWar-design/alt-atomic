@@ -12,7 +12,7 @@ set -euo pipefail
 ###############################################################################
 
 # Массив групп, в которые нужно добавить пользователей
-groups=(docker lxd cuse _xfsscrub fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera render usershares)
+groups=(docker lxd cuse fuse libvirt adm wheel uucp cdrom cdwriter audio users video netadmin scanner xgrp camera render usershares)
 
 # Получаем всех пользователей с UID >= 1000, исключая nobody
 userarray=($(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd))
@@ -44,167 +44,121 @@ for user in "${userarray[@]}"; do
 done
 
 ###############################################################################
-# Часть 2. Создание системных групп и пользователей по файлам /usr/etc/group и /usr/etc/passwd
+# Часть 2. Объединение /etc/passwd
 ###############################################################################
 
-# Функция для логгирования
-log() {
-    echo "[INFO] $*"
-}
+BASE_PASSWD="/usr/lib/passwd"
+LOCAL_PASSWD="/etc/passwd"
+MERGED_PASSWD="/tmp/merged-passwd.$$"
 
-error() {
-    echo "[ERROR] $*" >&2
-}
+declare -A base_passwd    # Ассоциативный массив: username -> полная строка из базового файла
+declare -A local_passwd   # Ассоциативный массив: username -> полная строка из локального файла
 
-# Проверяем наличие файлов
-if [ ! -f /usr/etc/group ]; then
-    error "/usr/etc/group не найден!"
-    exit 1
-fi
+# Чтение базового файла (предполагается, что здесь только системные аккаунты)
+while IFS=: read -r username passwd uid gid gecos home shell; do
+    [[ -z "$username" ]] && continue
+    base_passwd["$username"]="${username}:${passwd}:${uid}:${gid}:${gecos}:${home}:${shell}"
+done < "$BASE_PASSWD"
 
-if [ ! -f /usr/etc/passwd ]; then
-    error "/usr/etc/passwd не найден!"
-    exit 1
-fi
+# Чтение локального файла
+while IFS=: read -r username passwd uid gid gecos home shell; do
+    [[ -z "$username" ]] && continue
+    local_passwd["$username"]="${username}:${passwd}:${uid}:${gid}:${gecos}:${home}:${shell}"
+done < "$LOCAL_PASSWD"
 
-# Ассоциативный массив для сопоставления gid -> group_name из /usr/etc/group
-declare -A gid_to_group
+# Создаем новый merged-файл.
+> "$MERGED_PASSWD"
 
-log "Обработка файла /usr/etc/group..."
-while IFS=: read -r group_name _ gid members; do
-    # Если поле gid не является числом – пропускаем
-    if ! [[ "$gid" =~ ^[0-9]+$ ]]; then
-        continue
+# Сначала записываем локальные учётные записи для пользователей с UID >= 1000 (обычные)
+for username in "${!local_passwd[@]}"; do
+    IFS=: read -r _ _ local_uid _ _ _ _ <<< "${local_passwd[$username]}"
+    if (( local_uid >= 1000 )); then
+        echo "${local_passwd[$username]}" >> "$MERGED_PASSWD"
     fi
-    # Рассматриваем только системные группы (gid < 1000)
-    if [ "$gid" -ge 1000 ]; then
-        continue
+done
+
+# Затем для системных учетных записей (UID < 1000) берем базовые записи.
+for username in "${!base_passwd[@]}"; do
+    IFS=: read -r _ _ base_uid _ _ _ _ <<< "${base_passwd[$username]}"
+    if (( base_uid < 1000 )); then
+        echo "${base_passwd[$username]}" >> "$MERGED_PASSWD"
     fi
+done
 
-    # Запоминаем соответствие gid -> group_name для последующего использования
-    gid_to_group["$gid"]="$group_name"
+# Сортируем итоговый файл по, например, username (при необходимости)
+sort "$MERGED_PASSWD" -o "$MERGED_PASSWD"
 
-    if getent group "$group_name" >/dev/null 2>&1; then
-        log "Группа '$group_name' уже существует – пропускаем создание."
-    else
-        log "Создаём группу '$group_name'..."
-        # Создаём системную группу; система подберёт свободный gid
-        groupadd --system "$group_name"
-    fi
-done < /usr/etc/group
+echo "Объединение /etc/passwd завершено. Результат: $MERGED_PASSWD"
 
-log "Обработка файла /usr/etc/passwd..."
-while IFS=: read -r username _ uid gid gecos home shell; do
-    # Проверяем, что uid является числом; если нет – пропускаем
-    if ! [[ "$uid" =~ ^[0-9]+$ ]]; then
-        continue
-    fi
-    # Рассматриваем только системных пользователей (uid < 1000)
-    if [ "$uid" -ge 1000 ]; then
-        continue
-    fi
+# Резервное копирование локального файла passwd
+cp "$LOCAL_PASSWD" "${LOCAL_PASSWD}.bak"
+# Замена локального файла объединённым файлом
+mv "$MERGED_PASSWD" "$LOCAL_PASSWD"
+echo "/etc/passwd обновлён."
 
-   if getent passwd "$username" >/dev/null 2>&1; then
-       log "Пользователь '$username' уже существует – пропускаем создание."
-   else
-       # Определяем имя основной группы для пользователя.
-       primary_group="${gid_to_group[$gid]:-}"
-       if [ -z "$primary_group" ]; then
-           primary_group="$username"
-           if ! getent group "$primary_group" >/dev/null 2>&1; then
-               log "Основная группа '$primary_group' для пользователя '$username' не найдена – создаём."
-               groupadd --system "$primary_group"
-           fi
-       fi
+###############################################################################
+# Часть 3. Объединение /etc/group
+###############################################################################
 
-       # Если shell равен '/dev/null', используем корректный путь, например /sbin/nologin.
-       effective_shell="$shell"
-       if [ "$shell" = "/dev/null" ]; then
-            #effective_shell="/sbin/nologin"
-            effective_shell="/dev/null"
-       fi
+BASE_GROUP="/usr/lib/group"
+LOCAL_GROUP="/etc/group"
+MERGED_GROUP="/tmp/merged-group.$$"
 
-       # Если home равен '/dev/null' или TCB-каталог уже существует, используем флаг -M.
-       if [ "$home" = "/dev/null" ] || [ -d "/etc/tcb/$username" ]; then
-            if [ -d "/etc/tcb/$username" ]; then
-                log "TCB-каталог /etc/tcb/$username уже существует, готовлюсь к переименованию."
-                if [ -d "/etc/tcb/${username}.bak" ]; then
-                    log "Резервный каталог /etc/tcb/${username}.bak уже существует, удаляю его."
-                    rm -rf "/etc/tcb/${username}.bak"
-                fi
-                mv "/etc/tcb/$username" "/etc/tcb/${username}.bak"
-            fi
-            log "Создаю пользователя '$username' с флагом -M (не создавать домашнюю директорию), основная группа '$primary_group', home='$home', shell='$effective_shell'."
-            # Пытаемся создать пользователя с опцией -M; если useradd завершится с ошибкой, игнорируем её.
-            if ! useradd --system -M -g "$primary_group" -c "$gecos" -d "$home" -s "$effective_shell" "$username"; then
-                log "Ошибка при создании пользователя '$username', возможно, TCB-каталог уже существует."
-            fi
-            # Если временный каталог был создан, возвращаем его обратно и устанавливаем права.
-            if [ -d "/etc/tcb/${username}.bak" ]; then
-                log "Восстанавливаю TCB-каталог для пользователя '$username'."
-                mv "/etc/tcb/${username}.bak" "/etc/tcb/$username"
-                chown "$username:$primary_group" "/etc/tcb/$username"
-            fi
-       else
-            log "Создаю пользователя '$username' с основной группой '$primary_group', home='$home', shell='$effective_shell'."
-            useradd --system -g "$primary_group" -c "$gecos" -d "$home" -s "$effective_shell" "$username"
-            # Если home не '/dev/null' или '/' и директория отсутствует, создаём её.
-            if [[ "$home" != "/dev/null" && "$home" != "/" && ! -d "$home" ]]; then
-                log "Создаю директорию '$home' для пользователя '$username'."
-                mkdir -p "$home"
-                chown "$username:$primary_group" "$home"
-            fi
-       fi
-   fi
-done < /usr/etc/passwd
+declare -A base_gid         # base_gid[group] = gid из базового файла
+declare -A base_group_line  # base_group_line[group] = полная строка из базового файла
+declare -A local_group_line # local_group_line[group] = полная строка из локального файла
 
-# Дополнительная проверка директорий для всех системных пользователей (uid < 1000)
-while IFS=: read -r username _ uid _ _ home _; do
-    # Исключаем пользователей с uid >= 1000, а также записи, у которых home равен '/dev/null' или '/',
-    # дополнительно исключаем root и nobody, а также директории, начинающиеся с /usr.
-    if [[ "$uid" -ge 1000 || "$home" == "/dev/null" || "$home" == "/" || "$username" == "root" || "$username" == "nobody" || "$home" == /usr* ]]; then
-        continue
-    fi
+# Читаем базовый файл групп
+while IFS=: read -r grp pwd gid members; do
+    [[ -z "$grp" ]] && continue
+    base_gid["$grp"]="$gid"
+    base_group_line["$grp"]="${grp}:${pwd}:${gid}:${members}"
+done < "$BASE_GROUP"
 
-    if [ -d "$home" ]; then
-        log "Директория '$home' для пользователя '$username' уже существует."
-    else
-        log "Создаю домашнюю директорию '$home' для пользователя '$username'."
-        mkdir -p "$home"
-        # Получаем основную группу пользователя (четвертое поле)
-        primary_group=$(getent passwd "$username" | cut -d: -f4)
-        chown "$username:$primary_group" "$home"
-    fi
-done < /usr/etc/passwd
+# Читаем локальный файл групп
+while IFS=: read -r grp pwd gid members; do
+    [[ -z "$grp" ]] && continue
+    local_group_line["$grp"]="${grp}:${pwd}:${gid}:${members}"
+done < "$LOCAL_GROUP"
 
-# Дополнительно: добавляем пользователей в supplementary-группы согласно спискам в /usr/etc/group.
-log "Обработка дополнительных членов групп из /usr/etc/group..."
-while IFS=: read -r group_name _ _ members; do
-    # Если список членов пуст – пропускаем
-    [ -z "$members" ] && continue
+> "$MERGED_GROUP"
 
-    # Разбиваем список членов по запятой
-    IFS=',' read -ra user_list <<< "$members"
-    for member in "${user_list[@]}"; do
-        # Удаляем возможные пробелы по краям
-        member="$(echo "$member" | xargs)"
-        [ -z "$member" ] && continue
-
-        # Проверяем, что пользователь существует и является системным (uid < 1000)
-        if user_info=$(getent passwd "$member"); then
-            user_uid=$(echo "$user_info" | cut -d: -f3)
-            if [ "$user_uid" -ge 1000 ]; then
-                continue
-            fi
-            # Если пользователь уже входит в группу – пропускаем
-            if id -nG "$member" | tr ' ' '\n' | grep -qx "$group_name"; then
-                log "Пользователь '$member' уже является членом группы '$group_name' – пропускаем."
-            else
-                log "Добавляем пользователя '$member' в группу '$group_name' как дополнительную."
-                usermod -a -G "$group_name" "$member"
-            fi
-        else
-            log "Пользователь '$member' из списка группы '$group_name' не найден в системе – пропускаем."
+# Проходим по группам из базового файла: итоговый список должен содержать только группы, присутствующие в базовом файле.
+for grp in "${!base_group_line[@]}"; do
+    base_gid_val="${base_gid[$grp]}"
+    if [[ -n "${local_group_line[$grp]:-}" ]]; then
+        # Группа присутствует локально – проверяем GID
+        IFS=: read -r lgrp lpwd lgid lmembers <<< "${local_group_line[$grp]}"
+        if [[ "$lgid" != "$base_gid_val" ]]; then
+            echo "Обновление группы '$grp': локальный GID $lgid заменяется на базовый GID $base_gid_val."
+            lgid="$base_gid_val"
         fi
-    done
-done < /usr/etc/group
+        echo "${grp}:${lpwd}:${lgid}:${lmembers}" >> "$MERGED_GROUP"
+    else
+        echo "Добавление группы '$grp' из базового файла, так как она отсутствует в /etc/group."
+        echo "${base_group_line[$grp]}" >> "$MERGED_GROUP"
+    fi
+done
+
+# Удаляем из локального файла те группы, которых нет в базовом файле.
+# (По условию итоговый список должен содержать только группы из базового файла.)
+# Для наглядности можно вывести сообщение о том, какие группы будут удалены.
+TMP_LOCAL="/tmp/new-local-group.$$"
+> "$TMP_LOCAL"
+while IFS=: read -r grp rest; do
+    if [[ -n "${base_group_line[$grp]:-}" ]]; then
+        echo "${grp}:${rest}" >> "$TMP_LOCAL"
+    else
+        echo "Удаление локальной группы '$grp', отсутствующей в базовом файле."
+    fi
+done < "$LOCAL_GROUP"
+# Но итоговый merged-файл уже сформирован только на основе базового набора.
+sort "$MERGED_GROUP" -o "$MERGED_GROUP"
+
+echo "Объединение /etc/group завершено. Результат: $MERGED_GROUP"
+
+cp "$LOCAL_GROUP" "${LOCAL_GROUP}.bak"
+mv "$MERGED_GROUP" "$LOCAL_GROUP"
+echo "/etc/group обновлён."
+
+echo "=== Объединение завершено ==="
