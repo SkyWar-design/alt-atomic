@@ -31,6 +31,11 @@ echo "Синхронизация содержимого из $OSTREE_VAR в /var
 #   - --include '*/'    : включить все каталоги (и их подкаталоги)
 #   - --exclude '*'     : исключить все файлы (будут копироваться только каталоги)
 #rsync -av --ignore-existing --include '*/' --exclude '*' "${OSTREE_VAR}/" /var/
-rsync -av --include '*/' --exclude '*' "${OSTREE_VAR}/" /var/
+rsync -av \
+    --exclude='home/' \
+    --exclude='root/' \
+    --include='*/' \
+    --exclude='*' \
+    "${OSTREE_VAR}/" /var/
 
 echo "Синхронизация завершена."
