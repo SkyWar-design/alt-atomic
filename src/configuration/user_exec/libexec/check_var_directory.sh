@@ -34,6 +34,7 @@ echo "Синхронизация содержимого из $OSTREE_VAR в /var
 rsync -av \
     --exclude='home/' \
     --exclude='root/' \
+    --exclude='tmp/' \
     --include='*/' \
     --exclude='*' \
     "${OSTREE_VAR}/" /var/

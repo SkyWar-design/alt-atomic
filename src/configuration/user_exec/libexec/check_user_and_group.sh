@@ -12,7 +12,7 @@
 #
 # Перед запуском сделайте резервные копии /etc/passwd и /etc/group.
 #
-set -euo pipefail
+set -e
 
 echo "=== Начало синхронизации пользователей и групп ==="
 
@@ -164,7 +164,7 @@ for grp in "${!local_group_arr[@]}"; do
     fi
 done
 
-sort "$MERGED_GROUP" -o "$MERGED_GROUP"
+sort "$MERGED_GROUP" -o "${MERGED_GROUP}.tmp" && mv "${MERGED_GROUP}.tmp" "$MERGED_GROUP"
 echo "Объединение /etc/group завершено. Результат:"
 
 cp "$LOCAL_GROUP" "${LOCAL_GROUP}.bak"
