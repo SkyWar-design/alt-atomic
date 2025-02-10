@@ -2,6 +2,8 @@
 
 echo "::group:: ===$(basename "$0")==="
 
-# clear folder here
+rm -rf /var/root/.cache
+rm -rf /var/root/go
+rm -rf /boot/*
 
 echo "::endgroup::"
