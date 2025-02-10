@@ -1,7 +1,8 @@
 #!/bin/bash
+
 set -euo pipefail
 
-echo "Running atomic-actions build and install script..."
+echo "::group:: ===$(basename "$0")==="
 
 # Define repository and paths
 REPO_URL="https://github.com/code-ascend/atomic-actions.git"
@@ -42,4 +43,4 @@ find "${ACTIONS_DEST_PATH}" -type f -name "*.sh" -exec chmod +x {} \;
 echo "Cleaning up..."
 rm -rf "${BUILD_DIR}"
 
-echo "Installation complete!"
+echo "End kernel_setup.sh"

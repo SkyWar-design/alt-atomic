@@ -1,4 +1,4 @@
-FROM ghcr.io/skywar-design/alt-atomic:base
+FROM ghcr.io/code-ascend/alt-atomic:base
 
 RUN --mount=type=bind,source=./src,target=/src \
     apt-get update && \

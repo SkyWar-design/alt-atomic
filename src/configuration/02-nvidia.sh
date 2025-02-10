@@ -10,4 +10,4 @@ if [ "$BUILD_TYPE" = "nvidia" ]; then
   systemctl enable nvidia-resume
 fi
 
-echo "End nvidia settings"
+echo "End kernel_setup.sh"
