@@ -30,7 +30,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/skywar-design/alt-atomic:base
+          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:base
           platforms: linux/amd64
           build-args: BUILD_TYPE=default
 
