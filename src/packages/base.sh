@@ -4,7 +4,6 @@ echo "Installing base packages"
 
 apt-get install -y \
     zsh \
-    libnss-altfiles \
     golang \
     zram-generator \
     inxi \

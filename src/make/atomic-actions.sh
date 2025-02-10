@@ -4,7 +4,7 @@ set -euo pipefail
 echo "Running atomic-actions build and install script..."
 
 # Define repository and paths
-REPO_URL="https://github.com/SkyWar-design/atomic-actions.git"
+REPO_URL="https://github.com/code-ascend/atomic-actions.git"
 BUILD_DIR="/tmp/atomic-actions"
 INSTALL_DIR="/usr/local/bin"
 ACTIONS_SRC_PATH="${BUILD_DIR}/models/actions"

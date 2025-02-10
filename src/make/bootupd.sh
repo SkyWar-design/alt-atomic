@@ -4,7 +4,7 @@ set -euo pipefail
 echo "Running bootupd.sh"
 
 # Define repository and paths
-BOOTUPD_REPO="https://github.com/SkyWar-design/bootupd.git"
+BOOTUPD_REPO="https://github.com/code-ascend/bootupd.git"
 BOOTUPD_BUILD_DIR="/tmp/bootupd"
 
 # Clone the repository

@@ -23,7 +23,6 @@ if [ "$BUILD_TYPE" = "nvidia" ]; then
    ./configuration/nvidia.sh
 fi
 ./configuration/kernel.sh
-#./configuration/nss-altfiles.sh
 
 # Сборка программ
 ./make/zstd.sh
