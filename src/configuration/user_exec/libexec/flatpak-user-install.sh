@@ -44,7 +44,6 @@ flatpak install --user -y flathub com.mattjakeman.ExtensionManager && notify-sen
 flatpak install --user -y flathub org.gnome.NautilusPreviewer && notify-send "Flatpak Installation" "Installed NautilusPreviewer" --app-name="Flatpak Manager Service" -u NORMAL
 flatpak install --user -y flathub org.gnome.baobab && notify-send "Flatpak Installation" "Installed baobab" --app-name="Flatpak Manager Service" -u NORMAL
 flatpak install --user -y flathub org.gnome.World.PikaBackup && notify-send "Flatpak Installation" "Installed PikaBackup" --app-name="Flatpak Manager Service" -u NORMAL
-
 flatpak install --user -y flathub io.github.dvlv.boxbuddyrs && notify-send "Flatpak Installation" "Installed Boxbuddy" --app-name="Flatpak Manager Service" -u NORMAL
 flatpak install --user -y flathub com.github.tchx84.Flatseal && notify-send "Flatpak Installation" "Installed Flatseal" --app-name="Flatpak Manager Service" -u NORMAL
 flatpak install --user -y flathub org.telegram.desktop && notify-send "Flatpak Installation" "Installed telegram" --app-name="Flatpak Manager Service" -u NORMAL

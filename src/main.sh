@@ -1,37 +1,35 @@
 #!/bin/bash
 
-
-# любая ошибка остановит выполнение
 set -e
 
-echo "Running main.sh..."
+echo "Running scripts"
 
-# Базовые пакеты для работы системы
-./packages/apt_prepare.sh
-./packages/base.sh
-./packages/DE/GNOME/gnome.sh
-if [ "$BUILD_TYPE" = "nvidia" ]; then
-   ./packages/components/nvidia/packages.sh
-fi
-./packages/apt_ending.sh
+# Список директорий, в которых лежат скрипты (в нужном порядке)
+directories=(
+  "/src/packages"
+  "/src/configuration"
+  "/src/make"
+)
 
-# Настройка
-./configuration/branding.sh
-./configuration/settings.sh
-./configuration/user.sh
-if [ "$BUILD_TYPE" = "nvidia" ]; then
-   ./configuration/nvidia.sh
-fi
-./configuration/kernel.sh
+# Функция для запуска скриптов внутри заданной папки
+run_scripts_in_dir() {
+  local dir="$1"
+  echo "=== Running scripts in $dir ==="
 
-# Сборка программ
-./make/zstd.sh
-./make/cargo.sh
-./make/bootupd.sh
-./make/bootc.sh
-./make/brew.sh
-./make/zsh-plugins.sh
-./make/atomic-actions.sh
-./configuration/clear.sh
+  # Проверяем, есть ли там скрипты *.sh
+  if ls "$dir"/*.sh &> /dev/null; then
+    for script in $(ls "$dir"/*.sh | sort); do
+      echo "==> Running $script"
+      bash "$script"
+    done
+  else
+    echo "==> No .sh files found in $dir"
+  fi
+}
+
+# Запускаем все скрипты в перечисленных директориях
+for d in "${directories[@]}"; do
+  run_scripts_in_dir "$d"
+done
 
 echo "All scripts executed successfully."

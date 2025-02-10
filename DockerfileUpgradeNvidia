@@ -1,12 +1,11 @@
 FROM ghcr.io/skywar-design/alt-atomic:base
 
-RUN apt-get update && \
-    apt-get dist-upgrade -y
-
 RUN --mount=type=bind,source=./src,target=/src \
+    apt-get update && \
+     apt-get dist-upgrade -y \
     /src/make/atomic-actions.sh && \
-    /src/packages/components/nvidia/packages.sh && \
-    /src/configuration/nvidia.sh && \
+    /src/packages/02-nvidia-packages.sh && \
+    /src/configuration/03-nvidia.sh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir /var/lib/apt/lists/partial
